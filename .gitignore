@@ -1,6 +1,4 @@
 artifacts
 node_modules
-__test__
 cache
 types
-slither-audit.md
