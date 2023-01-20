@@ -2,13 +2,12 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import Chance from 'chance'
 import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
-import { VestingScheduleConfigStruct } from '../../types/contracts/KingVestingPool'
-import { deployKingVestingPool } from './deployKingVestingPool'
-import { SafeMath } from './safeMath'
+import { VestingScheduleConfigStruct } from '../../types/contracts/ERC20VestingPool'
+import { deployERC20VestingPool } from './deployERC20VestingPool'
 import { UnitParser } from './UnitParser'
 const chance = new Chance()
 
-export const KingVestingPoolFactory = {
+export const ERC20VestingPoolFactory = {
   generateVestingScheduleConfig({
     beneficiaryAddress,
     lockupDurationInDays = 0,
@@ -48,7 +47,7 @@ export const KingVestingPoolFactory = {
           }),
         ]
 
-    const [vestingPool, token] = await deployKingVestingPool({
+    const [vestingPool, token] = await deployERC20VestingPool({
       owner: targetOwner,
     })
 

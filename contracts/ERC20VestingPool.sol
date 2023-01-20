@@ -26,13 +26,13 @@ struct VestingScheduleConfig {
     uint256 vestingAmount;
 }
 
-contract KingVestingPool is Ownable {
+contract ERC20VestingPool is Ownable {
     using SafeMath for uint256;
 
     event EtherReleased(uint256 amount);
     event ERC20Released(address indexed token, uint256 amount);
 
-    IERC20 immutable _king;
+    IERC20 immutable _token;
     // one month
     uint256 public constant UNIT_VESTING_INTERVAL = 2592000;
     uint256 public immutable launchTime;
@@ -45,12 +45,12 @@ contract KingVestingPool is Ownable {
     constructor(address tokenAddress) {
         require(tokenAddress != address(0), "Invalid Token Address");
 
-        _king = IERC20(tokenAddress);
+        _token = IERC20(tokenAddress);
         launchTime = block.timestamp;
     }
 
     function getKingTokenAddress() external view returns (address) {
-        return address(_king);
+        return address(_token);
     }
 
     function addVestingSchedule(VestingScheduleConfig memory _config)
@@ -71,7 +71,7 @@ contract KingVestingPool is Ownable {
             _config.lockupAmount
         );
         require((totalVestingSum) > 0, "Invalid vesting amount");
-        bool success = _king.transferFrom(
+        bool success = _token.transferFrom(
             msg.sender,
             address(this),
             totalVestingSum
@@ -163,7 +163,7 @@ contract KingVestingPool is Ownable {
         require(clamable > 0, "No claimable balance");
         VestingSchedule storage schedule = _vestingSchedules[msg.sender];
         schedule.claimed += clamable;
-        bool success = _king.transfer(msg.sender, clamable);
+        bool success = _token.transfer(msg.sender, clamable);
         require(success, "Token transfer failed");
     }
 }

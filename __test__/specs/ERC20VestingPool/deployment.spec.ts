@@ -1,11 +1,11 @@
 import { expect, assert } from 'chai'
 import { ethers } from 'hardhat'
-import { deployKingVestingPool } from '../../utils/deployKingVestingPool'
+import { deployERC20VestingPool } from '../../utils/deployERC20VestingPool'
 import { deployMintableToken } from '../../utils/deployMintableToken'
-describe('UNIT TEST: KingVestingPool - deployment', () => {
+describe('UNIT TEST: ERC20VestingPool - deployment', () => {
   it('should return correct token address when the vesting pool is deployed', async () => {
     const [token] = await deployMintableToken()
-    const [vestingPool] = await deployKingVestingPool({
+    const [vestingPool] = await deployERC20VestingPool({
       token,
     })
 
@@ -14,7 +14,7 @@ describe('UNIT TEST: KingVestingPool - deployment', () => {
 
   it('should set correct launchTime when vesting pool is deployed', async () => {
     const [token] = await deployMintableToken()
-    const [vestingPool] = await deployKingVestingPool({
+    const [vestingPool] = await deployERC20VestingPool({
       token,
     })
     const provider = await ethers.provider

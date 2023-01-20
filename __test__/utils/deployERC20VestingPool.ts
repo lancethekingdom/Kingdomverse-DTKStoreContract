@@ -1,12 +1,12 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { KingVestingPool } from '../../types/contracts/KingVestingPool'
+import { ERC20VestingPool } from '../../types/contracts/ERC20VestingPool'
 // @ts-ignore
 import { ethers } from 'hardhat'
 import { MintableERC20 } from '../../types/contracts/MintableERC20'
 import { deployMintableToken } from './deployMintableToken'
 import { King } from '../../types/contracts/King'
 
-export const deployKingVestingPool = async ({
+export const deployERC20VestingPool = async ({
   owner,
   token,
 }: {
@@ -20,7 +20,7 @@ export const deployKingVestingPool = async ({
     token ?? (await deployMintableToken({ owner: targetOwner }))[0]
 
   const VestingContractFactory = await ethers.getContractFactory(
-    'KingVestingPool',
+    'ERC20VestingPool',
   )
 
   const vestingPool = await VestingContractFactory.connect(targetOwner).deploy(
@@ -28,7 +28,7 @@ export const deployKingVestingPool = async ({
   )
 
   return [vestingPool, targetToken, targetOwner] as [
-    KingVestingPool,
+    ERC20VestingPool,
     MintableERC20,
     SignerWithAddress,
   ]

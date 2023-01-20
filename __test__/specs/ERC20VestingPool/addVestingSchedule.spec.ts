@@ -1,17 +1,17 @@
 import { expect, assert } from 'chai'
 import { ethers } from 'hardhat'
 import { SafeMath } from '../../utils/safeMath'
-import { deployKingVestingPool } from '../../utils/deployKingVestingPool'
+import { deployERC20VestingPool } from '../../utils/deployERC20VestingPool'
 import { UnitParser } from '../../utils/UnitParser'
 import { BigNumber } from 'ethers'
-import { KingVestingPoolFactory } from '../../utils/KingVestingPoolFactory'
+import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 
-describe('UNIT TEST: KingVestingPool - addVestingSchedule', () => {
+describe('UNIT TEST: ERC20VestingPool - addVestingSchedule', () => {
   it('should throw error if not the owner calling this function', async () => {
     const [owner, notOwner] = await ethers.getSigners()
-    const [vestingPool] = await deployKingVestingPool({ owner })
+    const [vestingPool] = await deployERC20VestingPool({ owner })
 
-    const config = KingVestingPoolFactory.generateVestingScheduleConfig({
+    const config = ERC20VestingPoolFactory.generateVestingScheduleConfig({
       beneficiaryAddress: notOwner.address,
     })
     return vestingPool
@@ -26,11 +26,11 @@ describe('UNIT TEST: KingVestingPool - addVestingSchedule', () => {
   it('should throw error if the beneficiary is an empty address', async () => {
     const [owner] = await ethers.getSigners()
 
-    const config = KingVestingPoolFactory.generateVestingScheduleConfig({
+    const config = ERC20VestingPoolFactory.generateVestingScheduleConfig({
       beneficiaryAddress: '0x0000000000000000000000000000000000000000',
     })
 
-    const [vestingPool] = await deployKingVestingPool({
+    const [vestingPool] = await deployERC20VestingPool({
       owner,
     })
 
@@ -46,11 +46,11 @@ describe('UNIT TEST: KingVestingPool - addVestingSchedule', () => {
   it('should transfer corresponding token from caller to vesting pool & create vestingSchedule', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const configA = KingVestingPoolFactory.generateVestingScheduleConfig({
+    const configA = ERC20VestingPoolFactory.generateVestingScheduleConfig({
       beneficiaryAddress: beneficiaryA.address,
     })
 
-    const [vestingPool, token] = await deployKingVestingPool({
+    const [vestingPool, token] = await deployERC20VestingPool({
       owner,
     })
 
@@ -94,11 +94,11 @@ describe('UNIT TEST: KingVestingPool - addVestingSchedule', () => {
   it('should create vestingSchedule for the beneficary', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const configA = KingVestingPoolFactory.generateVestingScheduleConfig({
+    const configA = ERC20VestingPoolFactory.generateVestingScheduleConfig({
       beneficiaryAddress: beneficiaryA.address,
     })
 
-    const [vestingPool, token] = await deployKingVestingPool({
+    const [vestingPool, token] = await deployERC20VestingPool({
       owner,
     })
 
@@ -131,11 +131,11 @@ describe('UNIT TEST: KingVestingPool - addVestingSchedule', () => {
   it('should throw error if the beneficiary has already been scheduled', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const configA = KingVestingPoolFactory.generateVestingScheduleConfig({
+    const configA = ERC20VestingPoolFactory.generateVestingScheduleConfig({
       beneficiaryAddress: beneficiaryA.address,
     })
 
-    const [vestingPool, token] = await deployKingVestingPool({
+    const [vestingPool, token] = await deployERC20VestingPool({
       owner,
     })
 

@@ -1,13 +1,13 @@
 import { expect, assert } from 'chai'
 import { ethers } from 'hardhat'
-import { VestingScheduleConfigStruct } from '../../../types/contracts/KingVestingPool'
-import { KingVestingPoolFactory } from '../../utils/KingVestingPoolFactory'
+import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20VestingPool'
+import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 
-describe('UNIT TEST: KingVestingPool - claim', () => {
+describe('UNIT TEST: ERC20VestingPool - claim', () => {
   it('should throw error if sender claimable balance is 0', async () => {
     const [owner, beneficiaryA, nonVestee] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupDurationInDays: 1,
@@ -18,7 +18,7 @@ describe('UNIT TEST: KingVestingPool - claim', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -35,7 +35,7 @@ describe('UNIT TEST: KingVestingPool - claim', () => {
   it('should increment schedule.claimed based on the claimable amount', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -47,7 +47,7 @@ describe('UNIT TEST: KingVestingPool - claim', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -81,7 +81,7 @@ describe('UNIT TEST: KingVestingPool - claim', () => {
   it('should transfer corresponding amount of token based on the claimable amount', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -94,7 +94,7 @@ describe('UNIT TEST: KingVestingPool - claim', () => {
     const {
       vestingPool,
       token,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })

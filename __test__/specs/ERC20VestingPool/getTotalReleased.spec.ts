@@ -2,17 +2,17 @@ import { expect } from 'chai'
 import Chance from 'chance'
 import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
-import { VestingScheduleConfigStruct } from '../../../types/contracts/KingVestingPool'
-import { KingVestingPoolFactory } from '../../utils/KingVestingPoolFactory'
+import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20VestingPool'
+import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 import { SafeMath } from '../../utils/safeMath'
 
 const chance = new Chance()
 
-describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
+describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
   it('_getLockupReleased: should return zero if the blocktime is less than lockup duration + launchTime', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupDurationInDays: 1,
@@ -23,7 +23,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -38,7 +38,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
   it('_getLockupReleased: should return all lockupAmount if the blocktime is greater or equal to lockup duration + launchTime', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupDurationInDays: 1,
@@ -49,7 +49,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -67,7 +67,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
   it('_getVestingReleased: should return zero if the blocktime is less than lockupDuration + launchTime', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -79,7 +79,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -97,7 +97,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
   it('_getVestingReleased: should return all vesting amount if the blocktime is greater or equals to vestingEndTime', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -109,7 +109,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -127,7 +127,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
   it('_getVestingReleased: should return zero if the blocktime is greater than vestingStartTime but less than one unit vesting interval', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -139,7 +139,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -162,7 +162,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
   it('_getVestingReleased: should return one unitVestingRelease if the blocktime is equals to vestingStartTime + one unit vesting interval', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -174,7 +174,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -201,7 +201,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
   it('_getVestingReleased: should return corresponding number * unitVestingRelease if the blocktime is equals to vestingStartTime + certain number of unit vesting interval', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -217,7 +217,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
@@ -257,7 +257,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
 
   it('should return zero if random people calling this function', async () => {
     const [owner, beneficiaryA, random] = await ethers.getSigners()
-    const config: VestingScheduleConfigStruct = KingVestingPoolFactory.generateVestingScheduleConfig(
+    const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
       {
         beneficiaryAddress: beneficiaryA.address,
         lockupAmount: 0,
@@ -272,7 +272,7 @@ describe('UNIT TEST: KingVestingPool - getTotalReleased', () => {
     )
     const {
       vestingPool,
-    } = await KingVestingPoolFactory.utilVestingScheduleCreated({
+    } = await ERC20VestingPoolFactory.utilVestingScheduleCreated({
       owner,
       vestingScheduleConfigs: [config],
     })
