@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import Chance from 'chance'
-import { BigNumber } from 'ethers'
+import { BigNumber, BigNumberish } from 'ethers'
 import { ethers } from 'hardhat'
 import { VestingScheduleConfigStruct } from '../../types/contracts/ERC20VestingPool'
 import { deployERC20VestingPool } from './deployERC20VestingPool'
@@ -17,16 +17,16 @@ export const ERC20VestingPoolFactory = {
   }: {
     beneficiaryAddress: string
     lockupDurationInDays?: number
-    lockupAmount?: number
+    lockupAmount?: BigNumberish
     vestingDurationInDays?: number
-    vestingAmount?: number
+    vestingAmount?: BigNumberish
   }) {
     return {
       beneficiaryAddress,
       lockupDuration: lockupDurationInDays * 60 * 60 * 24,
-      lockupAmount: UnitParser.toEther(lockupAmount),
+      lockupAmount: BigNumber.from(lockupAmount),
       vestingDuration: vestingDurationInDays * 60 * 60 * 24,
-      vestingAmount: UnitParser.toEther(vestingAmount),
+      vestingAmount: BigNumber.from(vestingAmount),
     } as VestingScheduleConfigStruct
   },
   async utilVestingScheduleCreated({
@@ -47,7 +47,7 @@ export const ERC20VestingPoolFactory = {
           }),
         ]
 
-    const [vestingPool, token] = await deployERC20VestingPool({
+    const [vestingPool, token, __, vestingTs] = await deployERC20VestingPool({
       owner: targetOwner,
     })
 
@@ -64,15 +64,17 @@ export const ERC20VestingPoolFactory = {
       .connect(targetOwner)
       .approve(vestingPool.address, totalVestingAmount)
 
-    await vestingPool
+    const addVestingScheduleTx = await vestingPool
       .connect(targetOwner)
       .addVestingSchedules(targetVestingScheduleConfigs)
 
     return {
       vestingPool,
+      addVestingScheduleTx,
       token,
       vestingScheduleConfigs: targetVestingScheduleConfigs,
       owner: targetOwner,
+      vestingTs
     }
   },
 }

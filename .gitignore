@@ -2,3 +2,6 @@ artifacts
 node_modules
 cache
 types
+coverage
+coverage.json
+.env

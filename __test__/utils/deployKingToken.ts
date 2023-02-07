@@ -1,22 +1,20 @@
-import { UnitParser } from './UnitParser'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-// @ts-ignore
-import { ethers } from 'hardhat'
-import { King } from '../../types/contracts/King'
+import hre from 'hardhat'
+import "hardhat-ethernal"
+import { King } from '../../types'
 
-export type DeployKingTokenConfig = {
-  reserve?: number
+const { ethers } = hre
+
+export const deployKingToken = async ({
+  owner,
+}: {
   owner?: SignerWithAddress
-}
-
-export const deployKingToken = async (
-  { reserve = 1000000, owner }: DeployKingTokenConfig = { reserve: 1000000 },
-) => {
+} = {}) => {
   const [defaultOwner] = await ethers.getSigners()
   const TokenContractFactory = await ethers.getContractFactory('King')
   const targetOwner = owner ?? defaultOwner
-  const token = await TokenContractFactory.connect(targetOwner).deploy(
-    UnitParser.toEther(reserve),
-  )
-  return [token, targetOwner, reserve] as [King, SignerWithAddress, number]
+  const token = await TokenContractFactory.connect(targetOwner).deploy()
+  await token.deployed();
+  await hre.ethernal.push({ name: 'King', address: token.address});
+  return [token, targetOwner] as [King, SignerWithAddress]
 }

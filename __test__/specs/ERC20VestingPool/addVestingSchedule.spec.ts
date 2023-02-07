@@ -50,9 +50,7 @@ describe('UNIT TEST: ERC20VestingPool - addVestingSchedule', () => {
       beneficiaryAddress: beneficiaryA.address,
     })
 
-    const [vestingPool, token] = await deployERC20VestingPool({
-      owner,
-    })
+    const [vestingPool, token] = await deployERC20VestingPool({ owner })
 
     await token
       .connect(owner)
@@ -62,33 +60,11 @@ describe('UNIT TEST: ERC20VestingPool - addVestingSchedule', () => {
           configA.vestingAmount as BigNumber,
         ),
       )
-    const balanceOfVestingPoolBefore = UnitParser.fromEther(
-      await token.balanceOf(vestingPool.address),
-    )
 
-    const balanceOfCallerBefore = UnitParser.fromEther(
-      await token.balanceOf(owner.address),
-    )
-
-    await vestingPool.connect(owner).addVestingSchedule(configA)
-
-    const balanceOfVestingPoolAfter = UnitParser.fromEther(
-      await token.balanceOf(vestingPool.address),
-    )
-    const balanceOfCallerAfter = UnitParser.fromEther(
-      await token.balanceOf(owner.address),
-    )
-
-    expect(SafeMath.sub(balanceOfCallerBefore, balanceOfCallerAfter)).to.equal(
-      SafeMath.add(
-        UnitParser.fromEther(configA.lockupAmount as BigNumber),
-        UnitParser.fromEther(configA.vestingAmount as BigNumber),
-      ),
-    )
-
-    expect(SafeMath.sub(balanceOfCallerBefore, balanceOfCallerAfter)).to.equal(
-      SafeMath.sub(balanceOfVestingPoolAfter, balanceOfVestingPoolBefore),
-    )
+    const amount = BigNumber.from(configA.lockupAmount).add(BigNumber.from(configA.vestingAmount))
+    await expect(
+      () => vestingPool.connect(owner).addVestingSchedule(configA)
+    ).to.changeTokenBalances(token, [owner, vestingPool], [amount.mul(-1), amount]);
   })
 
   it('should create vestingSchedule for the beneficary', async () => {

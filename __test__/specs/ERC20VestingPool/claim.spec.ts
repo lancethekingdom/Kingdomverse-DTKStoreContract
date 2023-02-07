@@ -2,6 +2,7 @@ import { expect, assert } from 'chai'
 import { ethers } from 'hardhat'
 import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20VestingPool'
 import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
+import { UNIT_VESTING_INTERVAL } from '../../utils/config'
 
 describe('UNIT TEST: ERC20VestingPool - claim', () => {
   it('should throw error if sender claimable balance is 0', async () => {
@@ -52,30 +53,28 @@ describe('UNIT TEST: ERC20VestingPool - claim', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const unitVestingInterval = (
-      await vestingPool.UNIT_VESTING_INTERVAL()
-    ).toNumber()
+    const launchTime = (await vestingPool.launchTime()).toNumber()
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      await ethers.provider.send('evm_mine', [launchTime + UNIT_VESTING_INTERVAL])
 
-    const oneVestingInterval = unitVestingInterval
+      const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
 
-    await ethers.provider.send('evm_increaseTime', [oneVestingInterval])
-    await ethers.provider.send('evm_mine', [])
+      const vestingScheduleBefore = await vestingPool.getVestingSchedule(
+        beneficiaryA.address,
+      )
+      await vestingPool.connect(beneficiaryA).claim()
+      const vestingScheduleAfter = await vestingPool.getVestingSchedule(
+        beneficiaryA.address,
+      )
 
-    const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
+      expect(vestingScheduleAfter.claimed).to.be.ok
 
-    const vestingScheduleBefore = await vestingPool.getVestingSchedule(
-      beneficiaryA.address,
-    )
-    await vestingPool.connect(beneficiaryA).claim()
-    const vestingScheduleAfter = await vestingPool.getVestingSchedule(
-      beneficiaryA.address,
-    )
-
-    expect(vestingScheduleAfter.claimed).to.be.ok
-
-    expect(vestingScheduleAfter.claimed).to.equal(
-      vestingScheduleBefore.claimed.add(claimable),
-    )
+      expect(vestingScheduleAfter.claimed).to.equal(
+        vestingScheduleBefore.claimed.add(claimable),
+      )
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('should transfer corresponding amount of token based on the claimable amount', async () => {
@@ -99,30 +98,29 @@ describe('UNIT TEST: ERC20VestingPool - claim', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const unitVestingInterval = (
-      await vestingPool.UNIT_VESTING_INTERVAL()
-    ).toNumber()
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
 
-    const oneVestingInterval = unitVestingInterval
+      const launchTime = (await vestingPool.launchTime()).toNumber()
+      await ethers.provider.send('evm_mine', [launchTime + UNIT_VESTING_INTERVAL])
 
-    await ethers.provider.send('evm_increaseTime', [oneVestingInterval])
-    await ethers.provider.send('evm_mine', [])
+      const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
 
-    const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
+      const vestingPoolBalanceBefore = await token.balanceOf(vestingPool.address)
+      const beneficiaryBalanceBefore = await token.balanceOf(beneficiaryA.address)
 
-    const vestingPoolBalanceBefore = await token.balanceOf(vestingPool.address)
-    const beneficiaryBalanceBefore = await token.balanceOf(beneficiaryA.address)
+      await vestingPool.connect(beneficiaryA).claim()
 
-    await vestingPool.connect(beneficiaryA).claim()
+      const vestingPoolBalanceAfter = await token.balanceOf(vestingPool.address)
+      const beneficiaryBalanceAfter = await token.balanceOf(beneficiaryA.address)
 
-    const vestingPoolBalanceAfter = await token.balanceOf(vestingPool.address)
-    const beneficiaryBalanceAfter = await token.balanceOf(beneficiaryA.address)
-
-    expect(vestingPoolBalanceBefore.sub(vestingPoolBalanceAfter)).to.equal(
-      claimable,
-    )
-    expect(vestingPoolBalanceBefore.sub(vestingPoolBalanceAfter)).to.equal(
-      beneficiaryBalanceAfter.sub(beneficiaryBalanceBefore),
-    )
+      expect(vestingPoolBalanceBefore.sub(vestingPoolBalanceAfter)).to.equal(
+        claimable,
+      )
+      expect(vestingPoolBalanceBefore.sub(vestingPoolBalanceAfter)).to.equal(
+        beneficiaryBalanceAfter.sub(beneficiaryBalanceBefore),
+      )
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 })

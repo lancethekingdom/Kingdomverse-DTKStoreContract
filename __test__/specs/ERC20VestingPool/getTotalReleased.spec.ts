@@ -3,6 +3,7 @@ import Chance from 'chance'
 import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
 import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20VestingPool'
+import { UNIT_VESTING_INTERVAL } from '../../utils/config'
 import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 import { SafeMath } from '../../utils/safeMath'
 
@@ -54,14 +55,18 @@ describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const twoDays = 2 * 24 * 60 * 60
-    await ethers.provider.send('evm_increaseTime', [twoDays])
-    await ethers.provider.send('evm_mine', [])
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const launchTime = (await vestingPool.launchTime()).toNumber()
+      const twoDays = 2 * 24 * 60 * 60
+      await ethers.provider.send('evm_mine', [launchTime + twoDays])
 
-    const totalReleased = await vestingPool
-      .connect(beneficiaryA)
-      .getTotalReleased()
-    expect(totalReleased).to.equal(config.lockupAmount)
+      const totalReleased = await vestingPool
+        .connect(beneficiaryA)
+        .getTotalReleased()
+      expect(totalReleased).to.equal(config.lockupAmount)
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('_getVestingReleased: should return zero if the blocktime is less than lockupDuration + launchTime', async () => {
@@ -84,14 +89,18 @@ describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const twoDays = 2 * 24 * 60 * 60
-    await ethers.provider.send('evm_increaseTime', [twoDays])
-    await ethers.provider.send('evm_mine', [])
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const launchTime = (await vestingPool.launchTime()).toNumber()
+      const twoDays = 2 * 24 * 60 * 60
+      await ethers.provider.send('evm_mine', [launchTime + twoDays])
 
-    const totalReleased = await vestingPool
-      .connect(beneficiaryA)
-      .getTotalReleased()
-    expect(totalReleased).to.equal(0)
+      const totalReleased = await vestingPool
+        .connect(beneficiaryA)
+        .getTotalReleased()
+      expect(totalReleased).to.equal(0)
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('_getVestingReleased: should return all vesting amount if the blocktime is greater or equals to vestingEndTime', async () => {
@@ -114,14 +123,19 @@ describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const sixtyDays = 60 * 24 * 60 * 60
-    await ethers.provider.send('evm_increaseTime', [sixtyDays])
-    await ethers.provider.send('evm_mine', [])
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const launchTime = (await vestingPool.launchTime()).toNumber()
+      const sixtyDays = 60 * 24 * 60 * 60
+      // await ethers.provider.send('evm_increaseTime', [sixtyDays])
+      await ethers.provider.send('evm_mine', [launchTime + sixtyDays])
 
-    const totalReleased = await vestingPool
-      .connect(beneficiaryA)
-      .getTotalReleased()
-    expect(totalReleased).to.equal(config.vestingAmount)
+      const totalReleased = await vestingPool
+        .connect(beneficiaryA)
+        .getTotalReleased()
+      expect(totalReleased).to.equal(config.vestingAmount)
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('_getVestingReleased: should return zero if the blocktime is greater than vestingStartTime but less than one unit vesting interval', async () => {
@@ -144,19 +158,19 @@ describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const unitVestingInterval = (
-      await vestingPool.UNIT_VESTING_INTERVAL()
-    ).toNumber()
+    const lessThanOneVestingInterval = UNIT_VESTING_INTERVAL - 1000
 
-    const lessThanOneVestingInterval = unitVestingInterval - 1000
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const launchTime = (await vestingPool.launchTime()).toNumber()
+      await ethers.provider.send('evm_mine', [launchTime + lessThanOneVestingInterval])
 
-    await ethers.provider.send('evm_increaseTime', [lessThanOneVestingInterval])
-    await ethers.provider.send('evm_mine', [])
-
-    const totalReleased = await vestingPool
-      .connect(beneficiaryA)
-      .getTotalReleased()
-    expect(totalReleased).to.equal(0)
+      const totalReleased = await vestingPool
+        .connect(beneficiaryA)
+        .getTotalReleased()
+      expect(totalReleased).to.equal(0)
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('_getVestingReleased: should return one unitVestingRelease if the blocktime is equals to vestingStartTime + one unit vesting interval', async () => {
@@ -179,23 +193,22 @@ describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const unitVestingInterval = (
-      await vestingPool.UNIT_VESTING_INTERVAL()
-    ).toNumber()
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const launchTime = (await vestingPool.launchTime()).toNumber()
 
-    const oneVestingInterval = unitVestingInterval
+      await ethers.provider.send('evm_mine', [launchTime + UNIT_VESTING_INTERVAL])
 
-    await ethers.provider.send('evm_increaseTime', [oneVestingInterval])
-    await ethers.provider.send('evm_mine', [])
-
-    const totalReleased = await vestingPool
-      .connect(beneficiaryA)
-      .getTotalReleased()
-    expect(totalReleased).to.equal(
-      (config.vestingAmount as BigNumber)
-        .mul(unitVestingInterval)
-        .div(config.vestingDuration as BigNumber),
-    )
+      const totalReleased = await vestingPool
+        .connect(beneficiaryA)
+        .getTotalReleased()
+      expect(totalReleased).to.equal(
+        (config.vestingAmount as BigNumber)
+          .mul(UNIT_VESTING_INTERVAL)
+          .div(config.vestingDuration as BigNumber),
+      )
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('_getVestingReleased: should return corresponding number * unitVestingRelease if the blocktime is equals to vestingStartTime + certain number of unit vesting interval', async () => {
@@ -222,37 +235,29 @@ describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
       vestingScheduleConfigs: [config],
     })
 
-    const unitVestingInterval = (
-      await vestingPool.UNIT_VESTING_INTERVAL()
-    ).toNumber()
-
     const numberOfUnitVestingIntervalPassed = chance.integer({
       min: 1,
       max: SafeMath.div(
         (config.vestingDuration as any) as any,
-        unitVestingInterval,
+        UNIT_VESTING_INTERVAL,
       ),
     })
 
-    const correspondingNumOfIntervalPassed = SafeMath.mul(
-      numberOfUnitVestingIntervalPassed,
-      unitVestingInterval,
-    )
+    const launchTime = (await vestingPool.launchTime()).toNumber()
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      await ethers.provider.send('evm_mine', [launchTime + numberOfUnitVestingIntervalPassed * UNIT_VESTING_INTERVAL])
 
-    await ethers.provider.send('evm_increaseTime', [
-      correspondingNumOfIntervalPassed,
-    ])
-    await ethers.provider.send('evm_mine', [])
-
-    const totalReleased = await vestingPool
-      .connect(beneficiaryA)
-      .getTotalReleased()
-    expect(totalReleased).to.equal(
-      (config.vestingAmount as BigNumber)
-        .mul(unitVestingInterval)
-        .div(config.vestingDuration as BigNumber)
-        .mul(numberOfUnitVestingIntervalPassed),
-    )
+      const totalReleased = await vestingPool
+        .connect(beneficiaryA)
+        .getTotalReleased()
+      expect(totalReleased).to.equal(
+        (config.vestingAmount as BigNumber)
+          .mul(UNIT_VESTING_INTERVAL * numberOfUnitVestingIntervalPassed)
+          .div(config.vestingDuration as BigNumber)
+      )
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
   })
 
   it('should return zero if random people calling this function', async () => {

@@ -4,6 +4,7 @@ import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ethers'
 import '@typechain/hardhat'
 import 'hardhat-gas-reporter'
+import "hardhat-ethernal"
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -20,6 +21,8 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       gas: 2100000,
       gasPrice: 8000000000,
+      loggingEnabled: false,
+      initialDate: '2021-01-01T00:00:00Z',
     },
     localhost: {
       allowUnlimitedContractSize: true,
@@ -41,8 +44,15 @@ const config: HardhatUserConfig = {
     dontOverrideCompile: false,
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
   },
+  ethernal: {
+    uploadAst: true,
+    resetOnStart: 'Test',
+    disableSync: false,
+    disableTrace: false,
+    disabled: true
+  }
 }
 
 export default config
