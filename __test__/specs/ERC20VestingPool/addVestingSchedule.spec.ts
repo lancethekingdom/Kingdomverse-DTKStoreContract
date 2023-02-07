@@ -2,25 +2,22 @@ import { expect, assert } from 'chai'
 import { ethers } from 'hardhat'
 import { SafeMath } from '../../utils/safeMath'
 import { deployERC20VestingPool } from '../../utils/deployERC20VestingPool'
-import { UnitParser } from '../../utils/UnitParser'
 import { BigNumber } from 'ethers'
 import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 
 describe('UNIT TEST: ERC20VestingPool - addVestingSchedule', () => {
-  it('should throw error if not the owner calling this function', async () => {
+  it('should not throw error for non-owner calling', async () => {
     const [owner, notOwner] = await ethers.getSigners()
-    const [vestingPool] = await deployERC20VestingPool({ owner })
+    const [vestingPool, token] = await deployERC20VestingPool({ owner })
 
+    await token.connect(owner).transfer(notOwner.address, 1000)
+    await token.connect(notOwner).approve(vestingPool.address, 1000)
     const config = ERC20VestingPoolFactory.generateVestingScheduleConfig({
       beneficiaryAddress: notOwner.address,
+      lockupAmount: 1,
+      vestingAmount: 1,
     })
-    return vestingPool
-      .connect(notOwner)
-      .addVestingSchedule(config)
-      .then(() => assert.fail())
-      .catch((err: any) => {
-        assert.include(err.message, 'Ownable: caller is not the owner')
-      })
+    await vestingPool.connect(notOwner).addVestingSchedule(config)
   })
 
   it('should throw error if the beneficiary is an empty address', async () => {

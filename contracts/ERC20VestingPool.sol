@@ -45,10 +45,7 @@ contract ERC20VestingPool is Ownable {
         return address(_token);
     }
 
-    function addVestingSchedule(VestingScheduleConfig memory _config)
-        public
-        onlyOwner
-    {
+    function addVestingSchedule(VestingScheduleConfig memory _config) public {
         require(
             _config.beneficiaryAddress != address(0),
             "Beneficiary is zero address"

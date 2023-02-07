@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish, FixedNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat'
 import { VestingScheduleConfigStruct } from '../../types/contracts/ERC20VestingPool';
-import { UNIT_VESTING_INTERVAL } from '../utils/config';
+import { UNIT_VESTING_INTERVAL, VEST_START } from '../utils/config';
 import { ERC20VestingPoolFactory } from '../utils/ERC20VestingPoolFactory';
 
 
@@ -403,6 +403,35 @@ describe('Scenarios', async () => {
 
             await ethers.provider.send('evm_revert', [snapshot_id])
         }
+
+    });
+
+    it('Factory', async () => {
+        const [acc1, acc2] = await ethers.getSigners();
+        const KingToken = await ethers.getContractFactory('King')
+        const king = await KingToken.deploy()
+        await king.deployed();
+
+        // deploy factory, use event to find created contract addresses
+        // alternatively, use etherscan on mainnet if deployed from gnosis bytecode
+        const KingFactory = await ethers.getContractFactory('KingVestingPoolFactory')
+        const factory = await KingFactory.connect(acc2).deploy(acc1.address)
+        await factory.deployed();
+
+        // const tx1 = await factory.connect(acc2).transferOwnership(acc1.address)
+        // await tx1.wait();
+
+        const tx = await factory.connect(acc1).createPools(king.address, VEST_START, 54 / 2, {
+            gasLimit: 30000000
+        })
+        // const receipt = await tx.wait()
+        // console.log('Gas used', receipt.gasUsed) // 1046748
+
+
+        // const pools = (receipt as any).events.filter((e: any) => e.event === 'PoolCreated').map((e: any) => e.args[0])
+        // console.log(pools);
+        // // in constructor, 19304895 x2
+
 
     });
 });

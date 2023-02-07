@@ -44,7 +44,7 @@ const config: HardhatUserConfig = {
     dontOverrideCompile: false,
   },
   gasReporter: {
-    enabled: false,
+    enabled: true,
   },
   ethernal: {
     uploadAst: true,
