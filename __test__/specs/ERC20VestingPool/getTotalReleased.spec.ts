@@ -9,7 +9,7 @@ import { SafeMath } from '../../utils/safeMath'
 
 const chance = new Chance()
 
-describe.skip('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
+describe('UNIT TEST: ERC20VestingPool - getTotalReleased', () => {
   it('_getLockupReleased: should return zero if the blocktime is less than lockup duration + launchTime', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 

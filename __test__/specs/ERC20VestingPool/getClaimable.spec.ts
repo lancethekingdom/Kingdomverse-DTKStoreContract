@@ -10,7 +10,7 @@ import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20Vesti
 
 const chance = new Chance()
 
-describe.skip('UNIT TEST: ERC20VestingPool - getClaimable', () => {
+describe('UNIT TEST: ERC20VestingPool - getClaimable', () => {
   it('should return zero if no token is released', async () => {
     const [owner, beneficiaryA] = await ethers.getSigners()
 

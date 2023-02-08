@@ -4,7 +4,7 @@ import { deployKingToken } from '../../utils/deployKingToken'
 
 import { VEST_START } from '../../utils/config'
 
-describe.skip('UNIT TEST: ERC20VestingPool - deployment', () => {
+describe('UNIT TEST: ERC20VestingPool - deployment', () => {
   it('should return correct token address when the vesting pool is deployed', async () => {
     const [token] = await deployKingToken()
     const [vestingPool] = await deployERC20VestingPool({

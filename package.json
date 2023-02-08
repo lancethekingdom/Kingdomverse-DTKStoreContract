@@ -7,7 +7,7 @@
     "node": "env-cmd hardhat node",
     "compile": "hardhat compile",
     "test-local": "env-cmd hardhat --network localhost test",
-    "test": "env-cmd hardhat test",
+    "test": "hardhat test",
     "coverage": "hardhat coverage",
     "gen_addVestingSchedule_config": "node scripts/gen_addVestingSchedule_config_for_safe.mjs"
   },
