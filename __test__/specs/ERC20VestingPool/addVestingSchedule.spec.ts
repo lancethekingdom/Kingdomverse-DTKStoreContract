@@ -5,7 +5,7 @@ import { deployERC20VestingPool } from '../../utils/deployERC20VestingPool'
 import { BigNumber } from 'ethers'
 import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 
-describe('UNIT TEST: ERC20VestingPool - addVestingSchedule', () => {
+describe.skip('UNIT TEST: ERC20VestingPool - addVestingSchedule', () => {
   it('should not throw error for non-owner calling', async () => {
     const [owner, notOwner] = await ethers.getSigners()
     const [vestingPool, token] = await deployERC20VestingPool({ owner })

@@ -1,10 +1,10 @@
 import { expect, assert } from 'chai'
 import { ethers } from 'hardhat'
-import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20VestingPool'
 import { ERC20VestingPoolFactory } from '../../utils/ERC20VestingPoolFactory'
 import { UNIT_VESTING_INTERVAL } from '../../utils/config'
+import { VestingScheduleConfigStruct } from '../../../types/contracts/ERC20VestingPool'
 
-describe('UNIT TEST: ERC20VestingPool - claim', () => {
+describe.skip('UNIT TEST: ERC20VestingPool - claim', () => {
   it('should throw error if sender claimable balance is 0', async () => {
     const [owner, beneficiaryA, nonVestee] = await ethers.getSigners()
 

@@ -23,6 +23,7 @@ struct VestingScheduleConfig {
 }
 
 contract ERC20VestingPool is Ownable {
+    using SafeERC20 for IERC20;
     event ERC20Released(address indexed token, uint256 amount);
 
     IERC20 immutable _token;
@@ -34,7 +35,7 @@ contract ERC20VestingPool is Ownable {
     /**
      * @dev Set the beneficiary, start timestamp and vesting duration of the vesting wallet.
      */
-    constructor(address tokenAddress, uint _launchTime) {
+    constructor(address tokenAddress, uint256 _launchTime) {
         require(tokenAddress != address(0), "Invalid Token Address");
 
         _token = IERC20(tokenAddress);
@@ -58,13 +59,12 @@ contract ERC20VestingPool is Ownable {
 
         uint256 totalVestingSum = _config.vestingAmount + _config.lockupAmount;
         require((totalVestingSum) > 0, "Invalid vesting amount");
-        bool success = _token.transferFrom(
-            msg.sender,
-            address(this),
-            totalVestingSum
-        );
-        require(success, "Token transfer failed");
 
+        uint256 balanceBefore = _token.balanceOf(address(this));
+        _token.safeTransferFrom(msg.sender, address(this), totalVestingSum);
+        uint256 balanceAfter = _token.balanceOf(address(this));
+
+        require(balanceAfter >= balanceBefore, "ERC20 transfer error");
         vestingSchedule.valid = true;
         vestingSchedule.vestingAmount = _config.vestingAmount;
         vestingSchedule.lockupAmount = _config.lockupAmount;
@@ -113,7 +113,8 @@ contract ERC20VestingPool is Ownable {
         VestingSchedule storage schedule = _vestingSchedules[beneficiary];
 
         uint256 vestingStartTime = schedule.lockupDuration + launchTime;
-        if (schedule.lockupAmount > 0) vestingStartTime += UNIT_VESTING_INTERVAL; // having a lockup put off the vesting start time by 1 month
+        if (schedule.lockupAmount > 0)
+            vestingStartTime += UNIT_VESTING_INTERVAL; // having a lockup put off the vesting start time by 1 month
         // if there is no lockup, vesting starts from launch time (no lockup)
 
         if (block.timestamp < vestingStartTime) {
@@ -125,12 +126,15 @@ contract ERC20VestingPool is Ownable {
             return schedule.vestingAmount;
         }
 
-        return schedule.vestingAmount * ((block.timestamp - vestingStartTime) / UNIT_VESTING_INTERVAL) / (schedule.vestingDuration / UNIT_VESTING_INTERVAL);
+        return
+            (schedule.vestingAmount *
+                ((block.timestamp - vestingStartTime) /
+                    UNIT_VESTING_INTERVAL)) /
+            (schedule.vestingDuration / UNIT_VESTING_INTERVAL);
     }
 
     function getTotalReleased() public view returns (uint256) {
-        return
-            _getLockupReleased(msg.sender) + _getVestingReleased(msg.sender);
+        return _getLockupReleased(msg.sender) + _getVestingReleased(msg.sender);
     }
 
     function getClaimable() public view returns (uint256) {
@@ -144,8 +148,7 @@ contract ERC20VestingPool is Ownable {
         require(claimable > 0, "No claimable balance");
         VestingSchedule storage schedule = _vestingSchedules[msg.sender];
         schedule.claimed += claimable;
-        bool success = _token.transfer(msg.sender, claimable);
+        _token.safeTransfer(msg.sender, claimable);
         emit ERC20Released(address(_token), claimable);
-        require(success, "Token transfer failed");
     }
 }

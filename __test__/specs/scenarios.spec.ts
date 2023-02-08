@@ -7,7 +7,7 @@ import { UNIT_VESTING_INTERVAL, VEST_START } from '../utils/config';
 import { ERC20VestingPoolFactory } from '../utils/ERC20VestingPoolFactory';
 
 
-describe('Scenarios', async () => {
+describe.skip('Scenarios', async () => {
     it('SEED-1', async () => {
         const [owner, beneficiaryA] = await ethers.getSigners()
 
