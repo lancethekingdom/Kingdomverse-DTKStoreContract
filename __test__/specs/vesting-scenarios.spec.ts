@@ -41,6 +41,13 @@ describe('SCENARIO TEST', () => {
       lockupDurationInDays: 12 * 30,
       vestingDurationInDays: 18 * 30,
     },
+    // TEAM-1: 12 months lock-up , 12 months monthly vesting
+    {
+      lockupAmount: 0,
+      vestingAmount: totalAmount,
+      lockupDurationInDays: 12 * 30,
+      vestingDurationInDays: 12 * 30,
+    },
   ]
 
   scenarios.forEach(
@@ -75,7 +82,7 @@ describe('SCENARIO TEST', () => {
         expect(claimable).to.equal(0)
       })
 
-      it('getClaimable: Given not claim yet, should return all lockupAmount if the blocktime is greater than or equal to the vestingStartTime but less than one unit vesting period', async () => {
+      it('getClaimable: Given not claim yet, should return all lockupAmount if the blocktime is greater than or equal to the launchTime + lockupDuration but less than plus one unit vesting period ', async () => {
         const [owner, beneficiary] = await ethers.getSigners()
 
         const config: VestingScheduleConfigStruct = ERC20VestingPoolFactory.generateVestingScheduleConfig(
@@ -100,13 +107,8 @@ describe('SCENARIO TEST', () => {
         {
           const launchTime = (await vestingPool.launchTime()).toNumber()
           const lockupDuration = lockupDurationInDays * 24 * 60 * 60
-          const vestingStartTime =
-            launchTime +
-            lockupDuration +
-            (vestingAmount ? UNIT_VESTING_INTERVAL : 0)
-
           await ethers.provider.send('evm_mine', [
-            vestingStartTime + UNIT_VESTING_INTERVAL / 2,
+            launchTime + lockupDuration + UNIT_VESTING_INTERVAL / 2,
           ])
 
           const claimable = await vestingPool
