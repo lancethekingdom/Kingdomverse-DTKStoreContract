@@ -73,7 +73,9 @@ describe('SCENARIO TEST - release 0.5% upon listing, 18 months monthly vesting, 
       const launchTime = (await vestingPool.launchTime()).toNumber()
       const vestingDuration = vestingDurationInDays * 24 * 60 * 60
       await ethers.provider.send('evm_mine', [
-        launchTime + vestingDuration + UNIT_VESTING_INTERVAL,
+        launchTime +
+          vestingDuration +
+          (lockupAmount ? UNIT_VESTING_INTERVAL : 0),
       ])
 
       const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
@@ -107,7 +109,7 @@ describe('SCENARIO TEST - release 0.5% upon listing, 18 months monthly vesting, 
     })
 
     const lessThanOneVestingInterval =
-      UNIT_VESTING_INTERVAL + UNIT_VESTING_INTERVAL - 1000
+      UNIT_VESTING_INTERVAL + (lockupAmount ? UNIT_VESTING_INTERVAL : 0) - 1000
 
     const snapshot_id = await ethers.provider.send('evm_snapshot', [])
     {
@@ -146,7 +148,9 @@ describe('SCENARIO TEST - release 0.5% upon listing, 18 months monthly vesting, 
     {
       const launchTime = (await vestingPool.launchTime()).toNumber()
       await ethers.provider.send('evm_mine', [
-        launchTime + UNIT_VESTING_INTERVAL + UNIT_VESTING_INTERVAL,
+        launchTime +
+          UNIT_VESTING_INTERVAL +
+          (lockupAmount ? UNIT_VESTING_INTERVAL : 0),
       ])
 
       const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
@@ -194,7 +198,9 @@ describe('SCENARIO TEST - release 0.5% upon listing, 18 months monthly vesting, 
     {
       const launchTime = (await vestingPool.launchTime()).toNumber()
       await ethers.provider.send('evm_mine', [
-        launchTime + correspondingNumOfIntervalPassed + UNIT_VESTING_INTERVAL,
+        launchTime +
+          correspondingNumOfIntervalPassed +
+          (lockupAmount ? UNIT_VESTING_INTERVAL : 0),
       ])
 
       const claimable = await vestingPool.connect(beneficiaryA).getClaimable()
