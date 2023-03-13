@@ -1,3 +1,3 @@
-# Kingdomverse KING Token
+# Kingdomverse Store contract
 
-Solidity source code for $KING token of Kingdomverse
+Solidity source code for the store contract of Kingdomverse
