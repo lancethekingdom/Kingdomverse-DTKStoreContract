@@ -158,6 +158,20 @@ contract DTKStore is Ownable {
     // ─────────────────────────────────────────────────────────────────────
     // ─── Purchase Item ───────────────────────────────────────────────────
 
+    /**
+     * @dev User purchase item with an authed signature with base ether
+     * @param billId_ The bill id which user would like to pay for
+     * @param payment_ The payment amount the user need to pay
+     * @param signedBlockNum_ The block number where the signature has been signed
+     * @param nonce_ The user nonce for the purchase
+     * @param sig_ The authorized signature signed by _authedSigner
+     * ! Requirements:
+     * ! The user nonce must pass the validation of nonceGuard
+     * ! The signature must pass the validation of signatureGuard
+     * ! The msg.value must equal or greater than the payment value
+     * * Operations:
+     * * Emit a purchase item event
+     */
     function purchaseItem(
         uint256 billId_,
         uint256 payment_,
@@ -189,6 +203,21 @@ contract DTKStore is Ownable {
         emit PurchaseItem(billId_, payment_);
     }
 
+    /**
+     * @dev User purchase item with an authed signature with erc20 token
+     * @param billId_ The bill id which user would like to pay for
+     * @param tokenAddress_ The token address which the user need to pay in
+     * @param payment_ The payment amount the user need to pay
+     * @param signedBlockNum_ The block number where the signature has been signed
+     * @param nonce_ The user nonce for the purchase
+     * @param sig_ The authorized signature signed by _authedSigner
+     * ! Requirements:
+     * ! The user nonce must pass the validation of nonceGuard
+     * ! The signature must pass the validation of signatureGuard
+     * ! The msg.value must equal or greater than the payment value
+     * * Operations:
+     * * Emit a purchase item event
+     */
     function purchaseItem(
         uint256 billId_,
         address tokenAddress_,
@@ -226,11 +255,27 @@ contract DTKStore is Ownable {
     // ─────────────────────────────────────────────────────────────────────────────
     // ─── Withdraw ──────────────────────────────────────────────────────────
 
+    /**
+     * @dev Withdraw base ether from the contract balance
+     * @param recipient_ The recepient address where the ether would like to be withdrawed to
+     * @param amount_ The withdrawal amount
+     * ! Requirements:
+     * ! The caller must be the owner
+     * ! The the withdraw call must be success
+     */
     function withdraw(address recipient_, uint256 amount_) external onlyOwner {
         (bool sent, ) = recipient_.call{value: amount_}("");
         require(sent, DTKStoreErrorCodes.SendEtherFailed);
     }
 
+    /**
+     * @dev Withdraw base ether from the contract balance
+     * @param recipient_ The recepient address where the ether would like to be withdrawed to
+     * @param amount_ The withdrawal amount
+     * ! Requirements:
+     * ! The caller must be the owner
+     * ! The the withdraw call must be success
+     */
     function withdraw(
         address recipient_,
         address tokenAddress_,
