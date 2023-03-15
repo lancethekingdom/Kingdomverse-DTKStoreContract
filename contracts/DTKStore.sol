@@ -12,15 +12,23 @@ library DTKStoreErrorCodes {
     string constant InvalidInterface = "DTKStore:InvalidInterface";
     string constant InvalidNonce = "DTKStore:InvalidNonce";
     string constant InvalidSigner = "DTKStore:InvalidSigner";
+    string constant SignatureExpired = "DTKStore:SignatureExpired";
+    string constant InsufficientBalance = "DTKStore:InsufficientBalance";
+    string constant SendEtherFailed = "DTKStore:SendEtherFailed";
 }
 
 contract DTKStore is Ownable {
     using ECDSA for bytes32;
     using ERC165Checker for address;
-    // using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20;
     using Counters for Counters.Counter;
 
-    event PurchaseItem(address indexed token, uint256 amount);
+    event PurchaseItem(uint256 indexed billId, uint256 payment);
+    event PurchaseItem(
+        uint256 indexed billId,
+        address indexed token,
+        uint256 payment
+    );
 
     // ─── Variables ───────────────────────────────────────────────────────────────
 
@@ -28,8 +36,8 @@ contract DTKStore is Ownable {
      * Access Right Management
      */
     address _authedSigner;
-    uint256 public _sigValidBlockNum = 200; // 200 block for a signature to be valid
-    mapping(address => Counters.Counter) internal _nonces; // Mapping from account to its current consumable nonce
+    uint256 public _sigValidBlockNum = 12; // 12 block for a signature to be valid
+    mapping(address => mapping(uint256 => bool)) internal _nonces; // Mapping from account to its current consumable nonce
 
     // ─────────────────────────────────────────────────────────────────────────────
     // ─── Constructor ─────────────────────────────────────────────────────────────
@@ -78,12 +86,12 @@ contract DTKStore is Ownable {
      * * Operations:
      * * Update the nonce_ corresponding to account_ to True after all operations have completed
      */
-    modifier nonceGuard(uint256 nonce_, address account_) {
-        require(nonce(account_) == nonce_, DTKStoreErrorCodes.InvalidNonce);
+    modifier nonceGuard(address account_, uint256 nonce_) {
+        require(!nonce(account_, nonce_), DTKStoreErrorCodes.InvalidNonce);
 
         _;
 
-        _nonces[account_].increment();
+        _nonces[account_][nonce_] = true;
     }
 
     /**
@@ -93,15 +101,21 @@ contract DTKStore is Ownable {
      * @param msgHash_ the intended hash of the signature message for validation
      * ! Requirements:
      * ! The signer of sig_ recovered from msgHash_ must equals to signer_
+     * ! The signedBlockNum must not exceed _sigValidBlockNum
      */
     modifier signatureGuard(
         bytes memory sig_,
         address signer_,
-        bytes32 msgHash_
+        bytes32 msgHash_,
+        uint256 signedBlockNum_
     ) {
         require(
             msgHash_.toEthSignedMessageHash().recover(sig_) == signer_,
             DTKStoreErrorCodes.InvalidSigner
+        );
+        require(
+            signedBlockNum_ + _sigValidBlockNum >= block.number,
+            DTKStoreErrorCodes.SignatureExpired
         );
         _;
     }
@@ -110,12 +124,16 @@ contract DTKStore is Ownable {
     // ─── Public Functions ──────────────────────────────────────────────────────
 
     /**
-     * @dev [Access Right Management] Get the current consumable nonce of an account
+     * @dev [Access Right Management] Return whether a use nonce has been consumed
      * @param account_ The target account to get the nonce
-     * @return {Current Consumable Nonce}
+     * @param nonce_ The target account to get the nonce
+     * @return {Whether nonce has been consumed}
      */
-    function nonce(address account_) public view returns (uint256) {
-        return _nonces[account_].current();
+    function nonce(
+        address account_,
+        uint256 nonce_
+    ) public view returns (bool) {
+        return _nonces[account_][nonce_];
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -138,6 +156,99 @@ contract DTKStore is Ownable {
     }
 
     // ─────────────────────────────────────────────────────────────────────
+    // ─── Purchase Item ───────────────────────────────────────────────────
+
+    function purchaseItem(
+        uint256 billId_,
+        uint256 payment_,
+        uint256 signedBlockNum_,
+        uint256 nonce_,
+        bytes memory sig_
+    )
+        external
+        payable
+        nonceGuard(_msgSender(), nonce_)
+        signatureGuard(
+            sig_,
+            _authedSigner,
+            keccak256(
+                abi.encodePacked(
+                    "purchaseItem(uint256,uint256,uint256,uint256,bytes)",
+                    address(this),
+                    _msgSender(),
+                    billId_,
+                    payment_,
+                    signedBlockNum_,
+                    nonce_
+                )
+            ),
+            signedBlockNum_
+        )
+    {
+        require(msg.value >= payment_, DTKStoreErrorCodes.InsufficientBalance);
+        emit PurchaseItem(billId_, payment_);
+    }
+
+    function purchaseItem(
+        uint256 billId_,
+        address tokenAddress_,
+        uint256 payment_,
+        uint256 signedBlockNum_,
+        uint256 nonce_,
+        bytes memory sig_
+    )
+        external
+        interfaceGuard(tokenAddress_, type(IERC20).interfaceId)
+        nonceGuard(_msgSender(), nonce_)
+        signatureGuard(
+            sig_,
+            _authedSigner,
+            keccak256(
+                abi.encodePacked(
+                    "purchaseItem(uint256,address,uint256,uint256,uint256,bytes)",
+                    address(this),
+                    _msgSender(),
+                    billId_,
+                    tokenAddress_,
+                    payment_,
+                    signedBlockNum_,
+                    nonce_
+                )
+            ),
+            signedBlockNum_
+        )
+    {
+        IERC20 token = IERC20(tokenAddress_);
+        token.safeTransferFrom(_msgSender(), address(this), payment_);
+        emit PurchaseItem(billId_, tokenAddress_, payment_);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // ─── Withdraw ──────────────────────────────────────────────────────────
+
+    function withdraw(address recipient_, uint256 amount_) external onlyOwner {
+        (bool sent, ) = recipient_.call{value: amount_}("");
+        require(sent, DTKStoreErrorCodes.SendEtherFailed);
+    }
+
+    function withdraw(
+        address recipient_,
+        address tokenAddress_,
+        uint256 amount_
+    )
+        external
+        interfaceGuard(tokenAddress_, type(IERC20).interfaceId)
+        onlyOwner
+    {
+        IERC20 token = IERC20(tokenAddress_);
+        token.safeTransfer(recipient_, amount_);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    receive() external payable {}
+
+    fallback() external payable {}
 
     // function getKingTokenAddress() external view returns (address) {
     //     return address(_token);
