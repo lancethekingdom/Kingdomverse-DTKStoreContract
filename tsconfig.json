@@ -7,6 +7,12 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./scripts", "./__test__", "./types"],
+  "include": [
+    "./scripts",
+    "./__test__",
+    "./types",
+    "./hardhat-test-helpers",
+    "./ethers-test-helpers"
+  ],
   "files": ["./hardhat.config.ts"]
 }

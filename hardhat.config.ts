@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from 'hardhat/config'
+import '@typechain/hardhat'
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ethers'
-import '@typechain/hardhat'
 import 'hardhat-gas-reporter'
 import "hardhat-ethernal"
 

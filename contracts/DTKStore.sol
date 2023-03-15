@@ -35,9 +35,9 @@ contract DTKStore is Ownable {
     /**
      * Access Right Management
      */
-    address _authedSigner;
-    uint256 public _sigValidBlockNum = 12; // 12 block for a signature to be valid
-    mapping(address => mapping(uint256 => bool)) internal _nonces; // Mapping from account to its current consumable nonce
+    address private _authedSigner;
+    uint256 private _sigValidBlockNum; // number of blocks for a signature to last and be valid
+    mapping(address => mapping(uint256 => bool)) private _nonces; // Mapping from account to its current consumable nonce
 
     // ─────────────────────────────────────────────────────────────────────────────
     // ─── Constructor ─────────────────────────────────────────────────────────────
@@ -52,7 +52,7 @@ contract DTKStore is Ownable {
      * * Initialize the _sigValidBlockNum variable
      */
     constructor(address authedSigner_, uint256 sigValidBlockNum_) {
-        require(authedSigner_ != address(0), "Invalid Token Address");
+        require(authedSigner_ != address(0), DTKStoreErrorCodes.InvalidSigner);
 
         _authedSigner = authedSigner_;
         _sigValidBlockNum = sigValidBlockNum_;
@@ -139,6 +139,12 @@ contract DTKStore is Ownable {
     // ─────────────────────────────────────────────────────────────────────────────
     // ─── External Functions ──────────────────────────────────────────────────────
 
+    /**
+     * @dev [Metadata]: Get the number of blocks for a signature to last and be valid
+     */
+    function sigValidBlockNum() external view returns (uint256) {
+        return _sigValidBlockNum;
+    }
     /**
      * @dev [Metadata]: Get the authed signer address
      */
