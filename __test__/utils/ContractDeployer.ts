@@ -14,7 +14,6 @@ type TestKingDeploymentConfig = ContractDeploymentBaseConfig
 
 type DtkStoreDeploymentConfig = ContractDeploymentBaseConfig & {
   authedSignerAddress?: string
-  sigValidBlockNum?: number
 }
 
 class ContractDeployer {
@@ -28,7 +27,6 @@ class ContractDeployer {
   async DTKStore({
     owner,
     authedSignerAddress,
-    sigValidBlockNum = 12,
   }: DtkStoreDeploymentConfig = {}) {
     const [defaultOwner] = await ethers.getSigners()
     const contractFactory = await ethers.getContractFactory('DTKStore', {})
@@ -36,7 +34,7 @@ class ContractDeployer {
     const targetAuthedSignerAddress = authedSignerAddress ?? targetOwner.address
     const dtkStore = await contractFactory
       .connect(targetOwner)
-      .deploy(targetAuthedSignerAddress, sigValidBlockNum)
+      .deploy(targetAuthedSignerAddress)
     return [dtkStore, targetAuthedSignerAddress, targetOwner] as [
       DTKStore,
       string,
