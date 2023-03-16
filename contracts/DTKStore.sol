@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 library DTKStoreErrorCodes {
-    string constant InvalidInterface = "DTKStore:InvalidInterface";
     string constant InvalidNonce = "DTKStore:InvalidNonce";
     string constant InvalidSigner = "DTKStore:InvalidSigner";
     string constant SignatureExpired = "DTKStore:SignatureExpired";
@@ -43,7 +42,7 @@ contract DTKStore is Ownable {
     /**
      * @param authedSigner_ The authorized signer to sign all the authed signature
      * ! Requirements:
-     * ! Input manager_ must pass the validation of interfaceGuard corresponding to the ISoulhubManager interface
+     * ! Input authedSigner_ must not be an empty address
      * * Operations:
      * * Initialize the _authSigner variable
      */
@@ -55,22 +54,6 @@ contract DTKStore is Ownable {
 
     // ─────────────────────────────────────────────────────────────────────────────
     // ─── Modifiers ───────────────────────────────────────────────────────────────
-
-    /**
-     * @dev Ensure the address is implemented with correct Interface
-     * @param account_ The target account for validation
-     * @param interfaceId_ the interfaceId to validate
-     * ! Requirements:
-     * ! Input account_ must be a valid address
-     * ! Input account_ must supports the interface of interfaceId_
-     */
-    modifier interfaceGuard(address account_, bytes4 interfaceId_) {
-        require(
-            account_.supportsInterface(interfaceId_),
-            DTKStoreErrorCodes.InvalidInterface
-        );
-        _;
-    }
 
     /**
      * @dev [Access Right Management] Ensure the nonce has not been consumed yet,
@@ -188,10 +171,6 @@ contract DTKStore is Ownable {
                 DTKStoreErrorCodes.InsufficientBalance
             );
         } else {
-            require(
-                tokenAddress_.supportsInterface(type(IERC20).interfaceId),
-                DTKStoreErrorCodes.InvalidInterface
-            );
             IERC20 token = IERC20(tokenAddress_);
             token.safeTransferFrom(_msgSender(), address(this), payment_);
         }

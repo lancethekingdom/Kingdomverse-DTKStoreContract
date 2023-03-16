@@ -1,15 +1,37 @@
+import { UnitParser } from './../__test__/utils/UnitParser'
 import { expect } from 'chai'
 import { BaseContract, ContractFunction, ethers } from 'ethers'
 import { isBN } from './utils'
 
 function functionReturnEquals(actual: any, expected: any) {
   if (isBN(actual) || isBN(expected)) {
-    const parsedActual = isBN(actual)
-      ? (actual as ethers.BigNumber).toNumber()
-      : actual
-    const parsedExpected = isBN(expected)
-      ? (expected as ethers.BigNumber).toNumber()
-      : expected
+    const parsedActual = (() => {
+      if (isBN(actual)) {
+        try {
+          const parsed = (actual as ethers.BigNumber).toNumber()
+          return parsed
+        } catch (err) {
+          const parsed = UnitParser.fromEther(actual)
+          return parsed
+        }
+      } else {
+        return actual
+      }
+    })()
+
+    const parsedExpected = (() => {
+      if (isBN(expected)) {
+        try {
+          const parsed = (expected as ethers.BigNumber).toNumber()
+          return parsed
+        } catch (err) {
+          const parsed = UnitParser.fromEther(expected)
+          return parsed
+        }
+      } else {
+        return expected
+      }
+    })()
 
     expect(parsedActual).to.equal(
       parsedExpected,
