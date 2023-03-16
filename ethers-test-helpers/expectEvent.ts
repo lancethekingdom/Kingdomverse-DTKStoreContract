@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { BaseContract, ethers } from 'ethers'
 import { TypedEvent, TypedEventFilter } from '../types/common'
 import { UnitParser } from '../__test__/utils/UnitParser'
-import { isBN } from './utils'
+import { isBN, parseNumber } from './utils'
 
 function contains(
   args: ethers.utils.Result | undefined,
@@ -20,33 +20,9 @@ function contains(
       `expected event argument '${key}' to be null but got ${args![key]}`,
     )
   } else if (isBN(args![key]) || isBN(value)) {
-    const actual = (() => {
-      if (isBN(args![key])) {
-        try {
-          const parsed = (args![key] as ethers.BigNumber).toNumber()
-          return parsed
-        } catch (err) {
-          const parsed = UnitParser.fromEther(args![key])
-          return parsed
-        }
-      } else {
-        return args![key]
-      }
-    })()
+    const actual = parseNumber(args![key])
+    const expected = parseNumber(value)
 
-    const expected = (() => {
-      if (isBN(value)) {
-        try {
-          const parsed = (value as ethers.BigNumber).toNumber()
-          return parsed
-        } catch (err) {
-          const parsed = UnitParser.fromEther(value)
-          return parsed
-        }
-      } else {
-        return value
-      }
-    })()
     expect(actual).to.equal(
       expected,
       `expected event argument '${key}' to have value ${expected} but got ${actual}`,
