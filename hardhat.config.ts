@@ -3,7 +3,8 @@ import '@typechain/hardhat'
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ethers'
 import 'hardhat-gas-reporter'
-import "hardhat-ethernal"
+import 'hardhat-ethernal'
+import { env } from './environment'
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -28,6 +29,12 @@ const config: HardhatUserConfig = {
       gas: 2100000,
       gasPrice: 8000000000,
     },
+    bnb_testnet: {
+      url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      chainId: 97,
+      gasPrice: 20000000000,
+      accounts: [env.ROOT_WALLET_PRIVATE_KEY],
+    },
   },
   paths: {
     sources: './contracts',
@@ -50,8 +57,8 @@ const config: HardhatUserConfig = {
     resetOnStart: 'Test',
     disableSync: false,
     disableTrace: false,
-    disabled: true
-  }
+    disabled: true,
+  },
 }
 
 export default config

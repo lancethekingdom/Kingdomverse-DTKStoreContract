@@ -4,5 +4,7 @@ cache
 types
 coverage
 coverage.json
-.env
 scripts/king_vesting.xlsx
+.env
+.env.development
+.env.production

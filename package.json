@@ -48,6 +48,7 @@
     "@openzeppelin/contracts-upgradeable": "^4.8.2",
     "@remix-project/remixd": "^0.6.11",
     "date-fns": "^2.29.2",
-    "decimal.js": "^10.4.0"
+    "decimal.js": "^10.4.0",
+    "envalid": "^7.3.1"
   }
 }
