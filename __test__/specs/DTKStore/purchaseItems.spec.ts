@@ -1,4 +1,4 @@
-import { UnitParser } from './../../utils/UnitParser'
+import { UnitParser } from '../../utils/UnitParser'
 import { ethers } from 'hardhat'
 import {
   expectEvent,
@@ -18,7 +18,7 @@ import { expect } from 'chai'
 
 const chance = new Chance()
 
-describe('UNIT TEST: DTKStore - purchaseItem', () => {
+describe('UNIT TEST: DTKStore - purchaseItems', () => {
   it(`should throw error when the input nonce has already been consumed`, async () => {
     const [owner, buyer] = await ethers.getSigners()
     const [dtkStore] = await contractDeployer.DTKStore({
@@ -50,7 +50,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -63,7 +63,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
 
       await dtkStore
         .connect(buyer)
-        .purchaseItem(
+        .purchaseItems(
           billId,
           tokenAddress,
           UnitParser.toEther(payment),
@@ -76,7 +76,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       await expectRevert(
         dtkStore
           .connect(buyer)
-          .purchaseItem(
+          .purchaseItems(
             billId,
             tokenAddress,
             UnitParser.toEther(payment),
@@ -121,7 +121,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -133,7 +133,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       })
 
       await expectFnReturnChange(
-        dtkStore.connect(buyer).purchaseItem,
+        dtkStore.connect(buyer).purchaseItems,
         [
           billId,
           tokenAddress,
@@ -189,7 +189,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -203,7 +203,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       await expectRevert(
         dtkStore
           .connect(buyer)
-          .purchaseItem(
+          .purchaseItems(
             billId,
             tokenAddress,
             UnitParser.toEther(payment),
@@ -248,7 +248,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -267,7 +267,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       await expectRevert(
         dtkStore
           .connect(buyer)
-          .purchaseItem(
+          .purchaseItems(
             billId,
             tokenAddress,
             UnitParser.toEther(payment),
@@ -312,7 +312,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -324,7 +324,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       })
 
       await expectEvent(
-        dtkStore.connect(buyer).purchaseItem,
+        dtkStore.connect(buyer).purchaseItems,
         [
           billId,
           tokenAddress,
@@ -336,7 +336,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
         ],
         {
           contract: dtkStore,
-          eventSignature: 'PurchaseItem(uint256,address,uint256)',
+          eventSignature: 'PurchaseItems(uint256,address,uint256)',
           eventArgs: {
             billId,
             token: ZERO_ADDRESS,
@@ -380,7 +380,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -397,7 +397,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
 
       await dtkStore
         .connect(buyer)
-        .purchaseItem(
+        .purchaseItems(
           billId,
           tokenAddress,
           UnitParser.toEther(payment),
@@ -456,7 +456,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -468,7 +468,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       })
 
       await expectEvent(
-        dtkStore.connect(buyer).purchaseItem,
+        dtkStore.connect(buyer).purchaseItems,
         [
           billId,
           tokenAddress,
@@ -480,7 +480,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
         ],
         {
           contract: dtkStore,
-          eventSignature: 'PurchaseItem(uint256,address,uint256)',
+          eventSignature: 'PurchaseItems(uint256,address,uint256)',
           eventArgs: {
             billId,
             token: tokenAddress,
@@ -533,7 +533,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -545,7 +545,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       })
 
       await expectFnReturnChange(
-        dtkStore.connect(buyer).purchaseItem,
+        dtkStore.connect(buyer).purchaseItems,
         [
           billId,
           tokenAddress,
@@ -608,7 +608,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -622,7 +622,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       await expectRevert(
         dtkStore
           .connect(buyer)
-          .purchaseItem(
+          .purchaseItems(
             billId,
             tokenAddress,
             UnitParser.toEther(payment),
@@ -680,7 +680,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
           'uint256',
         ],
         values: [
-          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
           dtkStore.address,
           buyer.address,
           billId,
@@ -694,7 +694,7 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       await expectRevert(
         dtkStore
           .connect(buyer)
-          .purchaseItem(
+          .purchaseItems(
             billId,
             tokenAddress,
             UnitParser.toEther(payment),

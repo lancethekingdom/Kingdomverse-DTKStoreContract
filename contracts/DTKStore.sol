@@ -22,7 +22,7 @@ contract DTKStore is Ownable {
     using SafeERC20 for IERC20;
     using Counters for Counters.Counter;
 
-    event PurchaseItem(
+    event PurchaseItems(
         uint256 indexed billId,
         address indexed token,
         uint256 payment
@@ -136,7 +136,7 @@ contract DTKStore is Ownable {
      * * Operations:
      * * Emit a purchase item event
      */
-    function purchaseItem(
+    function purchaseItems(
         uint256 billId_,
         address tokenAddress_,
         uint256 payment_,
@@ -152,7 +152,7 @@ contract DTKStore is Ownable {
             _authedSigner,
             keccak256(
                 abi.encodePacked(
-                    "purchaseItem(uint256,address,uint256,uint256,uint256,bytes)",
+                    "purchaseItems(uint256,address,uint256,uint256,uint256,bytes)",
                     address(this),
                     _msgSender(),
                     billId_,
@@ -175,7 +175,7 @@ contract DTKStore is Ownable {
             token.safeTransferFrom(_msgSender(), address(this), payment_);
         }
 
-        emit PurchaseItem(billId_, tokenAddress_, payment_);
+        emit PurchaseItems(billId_, tokenAddress_, payment_);
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
