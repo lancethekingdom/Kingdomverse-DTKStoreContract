@@ -19,9 +19,7 @@ import { expect } from 'chai'
 const chance = new Chance()
 
 describe('UNIT TEST: DTKStore - purchaseItem', () => {
-  it(`IF pay with ether
-      should emit a purchase item event with correct params 
-      `, async () => {
+  it(`should throw error when the input nonce has already been consumed`, async () => {
     const [owner, buyer] = await ethers.getSigners()
     const [dtkStore] = await contractDeployer.DTKStore({
       owner,
@@ -32,6 +30,268 @@ describe('UNIT TEST: DTKStore - purchaseItem', () => {
       const currentBlock = await getCurrentBlock()
       // await ethers.provider.send('evm_mine', [beforeBlock.timestamp + 1000])
       // const afterBlock = await getCurrentBlock()
+
+      const billId = 1
+      const tokenAddress = ZERO_ADDRESS
+      const payment = chance.integer({ min: 0.02, max: 2000 })
+      const nonce = 0
+      const sigExpireBlockNum = currentBlock.number + 1
+
+      const signature = await generateSignature({
+        signer: owner,
+        types: [
+          'string',
+          'address',
+          'address',
+          'uint256',
+          'address',
+          'uint256',
+          'uint256',
+          'uint256',
+        ],
+        values: [
+          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          dtkStore.address,
+          buyer.address,
+          billId,
+          tokenAddress,
+          UnitParser.toEther(payment),
+          nonce,
+          sigExpireBlockNum,
+        ],
+      })
+
+      await dtkStore
+        .connect(buyer)
+        .purchaseItem(
+          billId,
+          tokenAddress,
+          UnitParser.toEther(payment),
+          nonce,
+          sigExpireBlockNum,
+          signature,
+          { value: UnitParser.toEther(payment) },
+        )
+
+      await expectRevert(
+        dtkStore
+          .connect(buyer)
+          .purchaseItem(
+            billId,
+            tokenAddress,
+            UnitParser.toEther(payment),
+            nonce,
+            sigExpireBlockNum,
+            signature,
+            { value: UnitParser.toEther(payment) },
+          ),
+        'DTKStore:InvalidNonce',
+      )
+    }
+
+    await ethers.provider.send('evm_revert', [snapshot_id])
+  })
+  it(`should update the user nonce comsumption status
+      `, async () => {
+    const [owner, buyer] = await ethers.getSigners()
+    const [dtkStore] = await contractDeployer.DTKStore({
+      owner,
+    })
+
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const currentBlock = await getCurrentBlock()
+
+      const billId = 1
+      const tokenAddress = ZERO_ADDRESS
+      const payment = chance.integer({ min: 0.02, max: 2000 })
+      const nonce = 0
+      const sigExpireBlockNum = currentBlock.number + 1
+
+      const signature = await generateSignature({
+        signer: owner,
+        types: [
+          'string',
+          'address',
+          'address',
+          'uint256',
+          'address',
+          'uint256',
+          'uint256',
+          'uint256',
+        ],
+        values: [
+          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          dtkStore.address,
+          buyer.address,
+          billId,
+          tokenAddress,
+          UnitParser.toEther(payment),
+          nonce,
+          sigExpireBlockNum,
+        ],
+      })
+
+      await expectFnReturnChange(
+        dtkStore.connect(buyer).purchaseItem,
+        [
+          billId,
+          tokenAddress,
+          UnitParser.toEther(payment),
+          nonce,
+          sigExpireBlockNum,
+          signature,
+          { value: UnitParser.toEther(payment) },
+        ],
+        {
+          contract: dtkStore,
+          functionSignature: 'nonce',
+          params: [buyer.address, nonce],
+          expectedBefore: false,
+          expectedAfter: true,
+        },
+      )
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
+  })
+  it(`should throw error if the message hash signer is not the authedSigner`, async () => {
+    const [
+      owner,
+      authedSigner,
+      buyer,
+      unauthenticatedSigner,
+    ] = await ethers.getSigners()
+    const [dtkStore] = await contractDeployer.DTKStore({
+      owner,
+      authedSignerAddress: authedSigner.address,
+    })
+
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const currentBlock = await getCurrentBlock()
+
+      const billId = 1
+      const tokenAddress = ZERO_ADDRESS
+      const payment = chance.integer({ min: 0.02, max: 2000 })
+      const nonce = 0
+      const sigExpireBlockNum = currentBlock.number + 1
+
+      const signature = await generateSignature({
+        signer: unauthenticatedSigner,
+        types: [
+          'string',
+          'address',
+          'address',
+          'uint256',
+          'address',
+          'uint256',
+          'uint256',
+          'uint256',
+        ],
+        values: [
+          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          dtkStore.address,
+          buyer.address,
+          billId,
+          tokenAddress,
+          UnitParser.toEther(payment),
+          nonce,
+          sigExpireBlockNum,
+        ],
+      })
+
+      await expectRevert(
+        dtkStore
+          .connect(buyer)
+          .purchaseItem(
+            billId,
+            tokenAddress,
+            UnitParser.toEther(payment),
+            nonce,
+            sigExpireBlockNum,
+            signature,
+            { value: UnitParser.toEther(payment) },
+          ),
+        'DTKStore:InvalidSigner',
+      )
+    }
+
+    await ethers.provider.send('evm_revert', [snapshot_id])
+  })
+  it(`should throw error if the message hash has already been expired`, async () => {
+    const [owner, authedSigner, buyer] = await ethers.getSigners()
+    const [dtkStore] = await contractDeployer.DTKStore({
+      owner,
+      authedSignerAddress: authedSigner.address,
+    })
+
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const currentBlock = await getCurrentBlock()
+
+      const billId = 1
+      const tokenAddress = ZERO_ADDRESS
+      const payment = chance.integer({ min: 0.02, max: 2000 })
+      const nonce = 0
+      const sigExpireBlockNum = currentBlock.number + 1
+
+      const signature = await generateSignature({
+        signer: authedSigner,
+        types: [
+          'string',
+          'address',
+          'address',
+          'uint256',
+          'address',
+          'uint256',
+          'uint256',
+          'uint256',
+        ],
+        values: [
+          'purchaseItem(uint256,address,uint256,uint256,uint256,bytes)',
+          dtkStore.address,
+          buyer.address,
+          billId,
+          tokenAddress,
+          UnitParser.toEther(payment),
+          nonce,
+          sigExpireBlockNum,
+        ],
+      })
+      await ethers.provider.send('evm_mine', [])
+      await ethers.provider.send('evm_mine', [])
+
+      expect((await getCurrentBlock()).number).to.be.greaterThan(
+        sigExpireBlockNum,
+      )
+      await expectRevert(
+        dtkStore
+          .connect(buyer)
+          .purchaseItem(
+            billId,
+            tokenAddress,
+            UnitParser.toEther(payment),
+            nonce,
+            sigExpireBlockNum,
+            signature,
+            { value: UnitParser.toEther(payment) },
+          ),
+        'DTKStore:SignatureExpired',
+      )
+    }
+
+    await ethers.provider.send('evm_revert', [snapshot_id])
+  })
+  it(`IF pay with ether
+      should emit a purchase item event with correct params `, async () => {
+    const [owner, buyer] = await ethers.getSigners()
+    const [dtkStore] = await contractDeployer.DTKStore({
+      owner,
+    })
+
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      const currentBlock = await getCurrentBlock()
 
       const billId = 1
       const tokenAddress = ZERO_ADDRESS
