@@ -476,7 +476,6 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           nonce,
           sigExpireBlockNum,
           signature,
-          { value: UnitParser.toEther(payment) },
         ],
         {
           contract: dtkStore,

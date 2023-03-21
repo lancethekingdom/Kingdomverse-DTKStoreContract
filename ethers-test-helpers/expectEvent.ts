@@ -93,7 +93,6 @@ export async function expectEvent<
     }
     return true
   })
-
   if (event === undefined) {
     throw exception[0]
   }
