@@ -670,7 +670,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
       const initialBuyerBalance = chance.integer({ min: 200, max: 10000 })
       await king
         .connect(buyer)
-        .mint(buyer.address, UnitParser.toEther(initialBuyerBalance))
+        .mint(
+          buyer.address,
+          UnitParser.toBigNumber(initialBuyerBalance, await king.decimals()),
+        )
       // approve all buyer king to dtkStore
       await king.connect(buyer).approve(dtkStore.address, MAX_UINT256)
 
@@ -700,7 +703,7 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           buyer.address,
           billId,
           tokenAddress,
-          UnitParser.toEther(payment),
+          UnitParser.toBigNumber(payment, await king.decimals()),
           nonce,
           sigExpireBlockNum,
         ],
@@ -712,11 +715,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           .purchaseItems(
             billId,
             tokenAddress,
-            UnitParser.toEther(payment),
+            UnitParser.toBigNumber(payment, await king.decimals()),
             nonce,
             sigExpireBlockNum,
             signature,
-            { value: UnitParser.toEther(payment) },
           ),
         'Address: call to non-contract',
       )
@@ -742,7 +744,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
       const initialBuyerBalance = chance.integer({ min: 200, max: 10000 })
       await king
         .connect(buyer)
-        .mint(buyer.address, UnitParser.toEther(initialBuyerBalance))
+        .mint(
+          buyer.address,
+          UnitParser.toBigNumber(initialBuyerBalance, await king.decimals()),
+        )
       // approve all buyer king to dtkStore
       await king.connect(buyer).approve(dtkStore.address, MAX_UINT256)
 
@@ -772,7 +777,7 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           buyer.address,
           billId,
           tokenAddress,
-          UnitParser.toEther(payment),
+          UnitParser.toBigNumber(payment, await king.decimals()),
           nonce,
           sigExpireBlockNum,
         ],
@@ -784,11 +789,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           .purchaseItems(
             billId,
             tokenAddress,
-            UnitParser.toEther(payment),
+            UnitParser.toBigNumber(payment, await king.decimals()),
             nonce,
             sigExpireBlockNum,
             signature,
-            { value: UnitParser.toEther(payment) },
           ),
         'assert.fail()',
       )
