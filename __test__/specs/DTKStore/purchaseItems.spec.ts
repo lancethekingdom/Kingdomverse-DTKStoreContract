@@ -5,7 +5,7 @@ import {
   expectFnReturnChange,
   expectRevert,
   MAX_UINT256,
-  parseNumber,
+  ParseNumberTypeEnum,
   ZERO_ADDRESS,
 } from '../../../ethers-test-helpers'
 import {
@@ -416,7 +416,7 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
     await ethers.provider.send('evm_revert', [snapshot_id])
   })
   it(`IF pay with ERC20 token
-      should emit a purchase item event with correct params`, async () => {
+      should emit a purchase item event with correct tokenAddress & payment params`, async () => {
     const [owner, buyer] = await ethers.getSigners()
     const [dtkStore] = await contractDeployer.DTKStore({
       owner,
@@ -431,7 +431,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
       const initialBuyerBalance = chance.integer({ min: 200, max: 10000 })
       await king
         .connect(buyer)
-        .mint(buyer.address, UnitParser.toEther(initialBuyerBalance))
+        .mint(
+          buyer.address,
+          UnitParser.toBigNumber(initialBuyerBalance, await king.decimals()),
+        )
       // approve all buyer king to dtkStore
       await king.connect(buyer).approve(dtkStore.address, MAX_UINT256)
 
@@ -461,7 +464,7 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           buyer.address,
           billId,
           tokenAddress,
-          UnitParser.toEther(payment),
+          UnitParser.toBigNumber(payment, await king.decimals()),
           nonce,
           sigExpireBlockNum,
         ],
@@ -472,7 +475,89 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
         [
           billId,
           tokenAddress,
-          UnitParser.toEther(payment),
+          UnitParser.toBigNumber(payment, await king.decimals()),
+          nonce,
+          sigExpireBlockNum,
+          signature,
+        ],
+        {
+          contract: dtkStore,
+          eventSignature: 'PurchaseItems(uint256,address,uint256)',
+          eventArgs: {
+            token: tokenAddress,
+            payment,
+          },
+        },
+        {
+          type: ParseNumberTypeEnum.BIGNUMBER,
+          decimal: await king.decimals(),
+        },
+      )
+      await ethers.provider.send('evm_mine', [])
+    }
+    await ethers.provider.send('evm_revert', [snapshot_id])
+  })
+  it(`IF pay with ERC20 token
+      should emit a purchase item event with correct billId params`, async () => {
+    const [owner, buyer] = await ethers.getSigners()
+    const [dtkStore] = await contractDeployer.DTKStore({
+      owner,
+    })
+    const [king] = await contractDeployer.King({
+      owner,
+    })
+
+    const snapshot_id = await ethers.provider.send('evm_snapshot', [])
+    {
+      // mint king token for buyer
+      const initialBuyerBalance = chance.integer({ min: 200, max: 10000 })
+      await king
+        .connect(buyer)
+        .mint(
+          buyer.address,
+          UnitParser.toBigNumber(initialBuyerBalance, await king.decimals()),
+        )
+      // approve all buyer king to dtkStore
+      await king.connect(buyer).approve(dtkStore.address, MAX_UINT256)
+
+      const currentBlock = await getCurrentBlock()
+
+      const billId = 1
+      const tokenAddress = king.address
+      const payment = initialBuyerBalance / 2
+      const nonce = 0
+      const sigExpireBlockNum = currentBlock.number + 1
+
+      const signature = await generateSignature({
+        signer: owner,
+        types: [
+          'string',
+          'address',
+          'address',
+          'uint256',
+          'address',
+          'uint256',
+          'uint256',
+          'uint256',
+        ],
+        values: [
+          'purchaseItems(uint256,address,uint256,uint256,uint256,bytes)',
+          dtkStore.address,
+          buyer.address,
+          billId,
+          tokenAddress,
+          UnitParser.toBigNumber(payment, await king.decimals()),
+          nonce,
+          sigExpireBlockNum,
+        ],
+      })
+
+      await expectEvent(
+        dtkStore.connect(buyer).purchaseItems,
+        [
+          billId,
+          tokenAddress,
+          UnitParser.toBigNumber(payment, await king.decimals()),
           nonce,
           sigExpireBlockNum,
           signature,
@@ -482,8 +567,6 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           eventSignature: 'PurchaseItems(uint256,address,uint256)',
           eventArgs: {
             billId,
-            token: tokenAddress,
-            payment,
           },
         },
       )
@@ -507,7 +590,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
       const initialBuyerBalance = chance.integer({ min: 200, max: 10000 })
       await king
         .connect(buyer)
-        .mint(buyer.address, UnitParser.toEther(initialBuyerBalance))
+        .mint(
+          buyer.address,
+          UnitParser.toBigNumber(initialBuyerBalance, await king.decimals()),
+        )
       // approve all buyer king to dtkStore
       await king.connect(buyer).approve(dtkStore.address, MAX_UINT256)
 
@@ -537,7 +623,7 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           buyer.address,
           billId,
           tokenAddress,
-          UnitParser.toEther(payment),
+          UnitParser.toBigNumber(payment, await king.decimals()),
           nonce,
           sigExpireBlockNum,
         ],
@@ -548,11 +634,10 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
         [
           billId,
           tokenAddress,
-          UnitParser.toEther(payment),
+          UnitParser.toBigNumber(payment, await king.decimals()),
           nonce,
           sigExpireBlockNum,
           signature,
-          { value: UnitParser.toEther(payment) },
         ],
         {
           contract: king,
@@ -560,6 +645,9 @@ describe('UNIT TEST: DTKStore - purchaseItems', () => {
           params: [dtkStore.address],
           expectedBefore: 0,
           expectedAfter: payment,
+        },
+        {
+          type: ParseNumberTypeEnum.ETHER,
         },
       )
       await ethers.provider.send('evm_mine', [])

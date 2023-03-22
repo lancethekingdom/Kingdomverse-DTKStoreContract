@@ -7,14 +7,36 @@ export function isBN(object: any) {
   )
 }
 
-export function parseNumber(num: BigNumber | number) {
+export enum ParseNumberTypeEnum {
+  DIRECT = 'DIRECT',
+  ETHER = 'ETHER',
+  BIGNUMBER = 'BIGNUMBER',
+}
+
+export type parseNumberOptionType = {
+  type: ParseNumberTypeEnum
+  decimal?: number
+}
+
+export function parseNumber(
+  num: BigNumber | number,
+  opt: parseNumberOptionType = {
+    type: ParseNumberTypeEnum.DIRECT,
+  },
+) {
   if (isBN(num)) {
     try {
-      const parsed = (num as ethers.BigNumber).toNumber()
-      return parsed
+      switch (opt.type) {
+        case ParseNumberTypeEnum.ETHER:
+          return UnitParser.fromEther(num as BigNumber)
+        case ParseNumberTypeEnum.BIGNUMBER:
+          return UnitParser.fromBigNumber(num as BigNumber, opt.decimal ?? 18)
+        case ParseNumberTypeEnum.DIRECT:
+        default:
+          return (num as ethers.BigNumber).toNumber()
+      }
     } catch (err) {
-      const parsed = UnitParser.fromEther(num as BigNumber)
-      return parsed
+      return UnitParser.fromEther(num as BigNumber)
     }
   } else {
     return num

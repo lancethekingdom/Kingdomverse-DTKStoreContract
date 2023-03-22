@@ -1,12 +1,16 @@
 import { UnitParser } from './../__test__/utils/UnitParser'
 import { expect } from 'chai'
 import { BaseContract, ContractFunction, ethers } from 'ethers'
-import { isBN, parseNumber } from './utils'
+import { isBN, parseNumber, parseNumberOptionType } from './utils'
 
-function functionReturnEquals(actual: any, expected: any) {
+function functionReturnEquals(
+  actual: any,
+  expected: any,
+  opt?: parseNumberOptionType,
+) {
   if (isBN(actual) || isBN(expected)) {
-    const parsedActual = parseNumber(actual)
-    const parsedExpected = parseNumber(expected)
+    const parsedActual = parseNumber(actual, opt)
+    const parsedExpected = parseNumber(expected, opt)
 
     expect(parsedActual).to.equal(
       parsedExpected,
@@ -43,6 +47,7 @@ export async function expectFnReturnChange<C extends BaseContract, T = any>(
     expectedBefore,
     expectedAfter,
   }: ExpectFnReturnChangeConfigParams<C, T>,
+  opt?: parseNumberOptionType,
 ) {
   const actualBefore = (await (contract[functionSignature] as ContractFunction<
     T
@@ -55,9 +60,9 @@ export async function expectFnReturnChange<C extends BaseContract, T = any>(
   >)(...params)) as T
 
   expectedBefore !== undefined &&
-    functionReturnEquals(actualBefore, expectedBefore)
+    functionReturnEquals(actualBefore, expectedBefore, opt)
   expectedAfter !== undefined &&
-    functionReturnEquals(actualAfter, expectedAfter)
+    functionReturnEquals(actualAfter, expectedAfter, opt)
 
   return [actualBefore, actualAfter]
 }

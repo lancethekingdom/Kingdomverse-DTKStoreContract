@@ -1,13 +1,13 @@
 import { expect } from 'chai'
 import { BaseContract, ethers } from 'ethers'
 import { TypedEvent, TypedEventFilter } from '../types/common'
-import { UnitParser } from '../__test__/utils/UnitParser'
-import { isBN, parseNumber } from './utils'
+import { isBN, parseNumber, parseNumberOptionType } from './utils'
 
 function contains(
   args: ethers.utils.Result | undefined,
   key: string,
   value: any,
+  opt?: parseNumberOptionType,
 ) {
   expect(args && key in args).to.equal(
     true,
@@ -20,8 +20,8 @@ function contains(
       `expected event argument '${key}' to be null but got ${args![key]}`,
     )
   } else if (isBN(args![key]) || isBN(value)) {
-    const actual = parseNumber(args![key])
-    const expected = parseNumber(value)
+    const actual = parseNumber(args![key], opt)
+    const expected = parseNumber(value, opt)
 
     expect(actual).to.equal(
       expected,
@@ -67,6 +67,7 @@ export async function expectEvent<
   promiseFn: Function,
   promiseFnParams: any[],
   { contract, eventSignature, eventArgs }: ExpectEventParams<C, S, E>,
+  opt?: parseNumberOptionType,
 ) {
   const eventFilter = contract['filters'][eventSignature]()
   const eventsBefore = await contract.queryFilter(eventFilter)
@@ -85,7 +86,7 @@ export async function expectEvent<
   const event = eventsAfter.find(function (e) {
     for (const [k, v] of Object.entries(eventArgs as {})) {
       try {
-        contains(e.args, k, v)
+        contains(e.args, k, v, opt)
       } catch (error) {
         exception.push(error)
         return false
