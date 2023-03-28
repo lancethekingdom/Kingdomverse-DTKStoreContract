@@ -7,7 +7,7 @@ import 'hardhat-ethernal'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
 import { env } from './environment'
-console.log({ env })
+
 const config: HardhatUserConfig = {
   solidity: {
     version: '0.8.19',
