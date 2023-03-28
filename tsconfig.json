@@ -8,7 +8,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "./scripts",
+    "./deploy",
     "./__test__",
     "./types",
     "./hardhat-test-helpers",

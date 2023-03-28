@@ -7,7 +7,7 @@ specifiers:
   '@nomicfoundation/hardhat-chai-matchers': ^1.0.0
   '@nomicfoundation/hardhat-network-helpers': ^1.0.8
   '@nomicfoundation/hardhat-toolbox': ^1.0.1
-  '@nomiclabs/hardhat-ethers': 2.2.2
+  '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
   '@nomiclabs/hardhat-etherscan': ^3.0.0
   '@nomiclabs/hardhat-waffle': ^2.0.3
   '@openzeppelin/contracts': ^4.8.2
@@ -24,10 +24,14 @@ specifiers:
   chance: ^1.1.8
   date-fns: ^2.29.2
   decimal.js: ^10.4.0
+  dotenv: ^16.0.3
+  dotenv-cli: ^7.1.0
   env-cmd: ^10.1.0
   envalid: ^7.3.1
   ethers: ^5.0.0
   hardhat: ^2.10.2
+  hardhat-deploy: ^0.11.25
+  hardhat-deploy-ethers: 0.3.0-beta.13
   hardhat-ethernal: ^3.1.0
   hardhat-gas-reporter: ^1.0.9
   solidity-coverage: ^0.7.21
@@ -43,17 +47,19 @@ dependencies:
   '@remix-project/remixd': 0.6.12
   date-fns: 2.29.3
   decimal.js: 10.4.3
+  dotenv: 16.0.3
+  dotenv-cli: 7.1.0
   envalid: 7.3.1
 
 devDependencies:
   '@ethersproject/abi': 5.7.0
   '@ethersproject/providers': 5.7.2
-  '@nomicfoundation/hardhat-chai-matchers': 1.0.6_dntrasblfyeflsnrtjxr3d547a
+  '@nomicfoundation/hardhat-chai-matchers': 1.0.6_6ydlat7c4avoezpjew7zq5tbum
   '@nomicfoundation/hardhat-network-helpers': 1.0.8_hardhat@2.13.0
-  '@nomicfoundation/hardhat-toolbox': 1.0.2_a6vlbckc4un7zc4e4psiddotha
-  '@nomiclabs/hardhat-ethers': 2.2.2_wknqauzjtp3mhprkntsmqpccee
+  '@nomicfoundation/hardhat-toolbox': 1.0.2_bgfdxmayqvntsynxlytzol3hwa
+  '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee
   '@nomiclabs/hardhat-etherscan': 3.1.7_hardhat@2.13.0
-  '@nomiclabs/hardhat-waffle': 2.0.5_u3rpjeimcwsavv62fpribvk5fm
+  '@nomiclabs/hardhat-waffle': 2.0.5_6x7enb264fjpzlsyzd4hvxrdna
   '@openzeppelin/test-helpers': 0.5.16
   '@typechain/ethers-v5': 10.2.0_7z2fwjd5cuev3ejr4i36eosrry
   '@typechain/hardhat': 6.1.5_i2fwc4p7n2iltkzqmr3qbux6yq
@@ -66,7 +72,9 @@ devDependencies:
   env-cmd: 10.1.0
   ethers: 5.7.2
   hardhat: 2.13.0_6qtx7vkbdhwvdm4crzlegk4mvi
-  hardhat-ethernal: 3.1.0_bddhumfzgut6i2lwp4fcpv4jnu
+  hardhat-deploy: 0.11.25
+  hardhat-deploy-ethers: 0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee
+  hardhat-ethernal: 3.1.0_obn5ppbomyas5ipaa5qptv6ilu
   hardhat-gas-reporter: 1.0.9_hardhat@2.13.0
   solidity-coverage: 0.7.22
   ts-node: 10.9.1_lwgqdwokjtwlohdqtbb6s252kq
@@ -1191,7 +1199,7 @@ packages:
       - supports-color
     dev: true
 
-  /@nomicfoundation/hardhat-chai-matchers/1.0.6_dntrasblfyeflsnrtjxr3d547a:
+  /@nomicfoundation/hardhat-chai-matchers/1.0.6_6ydlat7c4avoezpjew7zq5tbum:
     resolution: {integrity: sha512-f5ZMNmabZeZegEfuxn/0kW+mm7+yV7VNDxLpMOMGXWFJ2l/Ct3QShujzDRF9cOkK9Ui/hbDeOWGZqyQALDXVCQ==}
     peerDependencies:
       '@nomiclabs/hardhat-ethers': ^2.0.0
@@ -1200,7 +1208,7 @@ packages:
       hardhat: ^2.9.4
     dependencies:
       '@ethersproject/abi': 5.7.0
-      '@nomiclabs/hardhat-ethers': 2.2.2_wknqauzjtp3mhprkntsmqpccee
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee
       '@types/chai-as-promised': 7.1.5
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
@@ -1219,7 +1227,7 @@ packages:
       hardhat: 2.13.0_6qtx7vkbdhwvdm4crzlegk4mvi
     dev: true
 
-  /@nomicfoundation/hardhat-toolbox/1.0.2_a6vlbckc4un7zc4e4psiddotha:
+  /@nomicfoundation/hardhat-toolbox/1.0.2_bgfdxmayqvntsynxlytzol3hwa:
     resolution: {integrity: sha512-8CEgWSKUK2aMit+76Sez8n7UB0Ze1lwT+LcWxj4EFP30lQWOwOws048t6MTPfThH0BlSWjC6hJRr0LncIkc1Sw==}
     peerDependencies:
       '@ethersproject/abi': ^5.4.7
@@ -1244,9 +1252,9 @@ packages:
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@nomicfoundation/hardhat-chai-matchers': 1.0.6_dntrasblfyeflsnrtjxr3d547a
+      '@nomicfoundation/hardhat-chai-matchers': 1.0.6_6ydlat7c4avoezpjew7zq5tbum
       '@nomicfoundation/hardhat-network-helpers': 1.0.8_hardhat@2.13.0
-      '@nomiclabs/hardhat-ethers': 2.2.2_wknqauzjtp3mhprkntsmqpccee
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee
       '@nomiclabs/hardhat-etherscan': 3.1.7_hardhat@2.13.0
       '@typechain/ethers-v5': 10.2.0_7z2fwjd5cuev3ejr4i36eosrry
       '@typechain/hardhat': 6.1.5_i2fwc4p7n2iltkzqmr3qbux6yq
@@ -1369,16 +1377,6 @@ packages:
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.1
     dev: true
 
-  /@nomiclabs/hardhat-ethers/2.2.2_wknqauzjtp3mhprkntsmqpccee:
-    resolution: {integrity: sha512-NLDlDFL2us07C0jB/9wzvR0kuLivChJWCXTKcj3yqjZqMoYp7g7wwS157F70VHx/+9gHIBGzak5pKDwG8gEefA==}
-    peerDependencies:
-      ethers: ^5.0.0
-      hardhat: ^2.0.0
-    dependencies:
-      ethers: 5.7.2
-      hardhat: 2.13.0_6qtx7vkbdhwvdm4crzlegk4mvi
-    dev: true
-
   /@nomiclabs/hardhat-etherscan/3.1.7_hardhat@2.13.0:
     resolution: {integrity: sha512-tZ3TvSgpvsQ6B6OGmo1/Au6u8BrAkvs1mIC/eURA3xgIfznUZBhmpne8hv7BXUzw9xNL3fXdpOYgOQlVMTcoHQ==}
     peerDependencies:
@@ -1399,7 +1397,7 @@ packages:
       - supports-color
     dev: true
 
-  /@nomiclabs/hardhat-waffle/2.0.5_u3rpjeimcwsavv62fpribvk5fm:
+  /@nomiclabs/hardhat-waffle/2.0.5_6x7enb264fjpzlsyzd4hvxrdna:
     resolution: {integrity: sha512-U1RH9OQ1mWYQfb+moX5aTgGjpVVlOcpiFI47wwnaGG4kLhcTy90cNiapoqZenxcRAITVbr0/+QSduINL5EsUIQ==}
     peerDependencies:
       '@nomiclabs/hardhat-ethers': ^2.0.0
@@ -1407,7 +1405,7 @@ packages:
       ethers: ^5.0.0
       hardhat: ^2.0.0
     dependencies:
-      '@nomiclabs/hardhat-ethers': 2.2.2_wknqauzjtp3mhprkntsmqpccee
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee
       ethers: 5.7.2
       hardhat: 2.13.0_6qtx7vkbdhwvdm4crzlegk4mvi
     dev: true
@@ -2318,6 +2316,14 @@ packages:
 
   /aws4/1.12.0:
     resolution: {integrity: sha512-NmWvPnx0F1SfrQbYwOi7OeaNGokp9XhzNioJ/CSBs8Qa4vxug81mhJEAVZwxXuBmYB5KDRfMq/F3RR0BIU7sWg==}
+    dev: true
+
+  /axios/0.21.4_debug@4.3.4:
+    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+    dependencies:
+      follow-redirects: 1.15.2
+    transitivePeerDependencies:
+      - debug
     dev: true
 
   /axios/0.27.2:
@@ -3246,7 +3252,6 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-    dev: true
 
   /crypt/0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
@@ -3553,6 +3558,26 @@ packages:
       no-case: 2.3.2
     dev: true
 
+  /dotenv-cli/7.1.0:
+    resolution: {integrity: sha512-motytjZFQB3ZtGTIN4c0vnFgv4kuNZ2WxVnGY6PVFiygCzkm3IFBBguDUzezd9HgNA0OYYd6vNCWlozs0Q1Zxg==}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+      dotenv: 16.0.3
+      dotenv-expand: 10.0.0
+      minimist: 1.2.8
+    dev: false
+
+  /dotenv-expand/10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: false
+
   /duplexer3/0.1.5:
     resolution: {integrity: sha512-1A8za6ws41LQgv9HrE/66jyC5yuSjQ3L/KOpFtoBilsAK2iA2wuS5rTt1OCzIvtS2V7nVmedsUU+DGRcjBmOYA==}
 
@@ -3585,6 +3610,10 @@ packages:
 
   /emoji-regex/8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
+    dev: true
+
+  /encode-utf8/1.0.3:
+    resolution: {integrity: sha512-ucAnuBEhUK4boH2HjVYG5Q2mQyPorvv0u/ocS+zhdw0S8AlHYY+GOFhP1Gio5z4icpP2ivFSvhtFjQi8+T9ppw==}
     dev: true
 
   /encodeurl/1.0.2:
@@ -4276,6 +4305,12 @@ packages:
     hasBin: true
     dev: true
 
+  /fmix/0.1.0:
+    resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
+    dependencies:
+      imul: 1.0.1
+    dev: true
+
   /follow-redirects/1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
@@ -4359,6 +4394,15 @@ packages:
       klaw: 1.3.1
       path-is-absolute: 1.0.1
       rimraf: 2.7.1
+    dev: true
+
+  /fs-extra/10.1.0:
+    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 6.1.0
+      universalify: 2.0.0
     dev: true
 
   /fs-extra/3.0.1:
@@ -4747,14 +4791,46 @@ packages:
       har-schema: 2.0.0
     dev: true
 
-  /hardhat-ethernal/3.1.0_bddhumfzgut6i2lwp4fcpv4jnu:
+  /hardhat-deploy-ethers/0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee:
+    resolution: {integrity: sha512-PdWVcKB9coqWV1L7JTpfXRCI91Cgwsm7KLmBcwZ8f0COSm1xtABHZTyz3fvF6p42cTnz1VM0QnfDvMFlIRkSNw==}
+    peerDependencies:
+      ethers: ^5.0.0
+      hardhat: ^2.0.0
+    dependencies:
+      ethers: 5.7.2
+      hardhat: 2.13.0_6qtx7vkbdhwvdm4crzlegk4mvi
+    dev: true
+
+  /hardhat-deploy/0.11.25:
+    resolution: {integrity: sha512-ppSgrVE9A13YgTmf2PQGoyIs9o/jgJOMORrUP/rblU5K8mQ2YHWlPvkzZmP4h+SBW+tNmlnvSrf5K5DmMmExhw==}
+    dependencies:
+      '@types/qs': 6.9.7
+      axios: 0.21.4_debug@4.3.4
+      chalk: 4.1.2
+      chokidar: 3.5.3
+      debug: 4.3.4
+      enquirer: 2.3.6
+      ethers: 5.7.2
+      form-data: 4.0.0
+      fs-extra: 10.1.0
+      match-all: 1.2.6
+      murmur-128: 0.2.1
+      qs: 6.11.1
+      zksync-web3: 0.8.1_ethers@5.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: true
+
+  /hardhat-ethernal/3.1.0_obn5ppbomyas5ipaa5qptv6ilu:
     resolution: {integrity: sha512-oQUzlAQxQPx1o6s0N9p8TJ+9h9GYKFcwkaCv0yK/yfeqHhRun7O/VykEa+SxukvlzIo2h/Gw3anp0TTfWDLlhA==}
     peerDependencies:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.10
       hardhat: ^2.9.1
     dependencies:
       '@firebase/firestore-types': 2.2.0
-      '@nomiclabs/hardhat-ethers': 2.2.2_wknqauzjtp3mhprkntsmqpccee
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_wknqauzjtp3mhprkntsmqpccee
       axios: 0.27.2
       firebase: 9.9.4
       hardhat: 2.13.0_6qtx7vkbdhwvdm4crzlegk4mvi
@@ -5100,6 +5176,11 @@ packages:
 
   /immutable/4.3.0:
     resolution: {integrity: sha512-0AOCmOip+xgJwEVTQj1EfiDDOkPmuyllDuTuEX+DDXUgapLAsBIfkg3sxCYyCEA8mQqZrrxPUGjcOQ2JS3WLkg==}
+    dev: true
+
+  /imul/1.0.1:
+    resolution: {integrity: sha512-WFAgfwPLAjU66EKt6vRdTlKj4nAgIDQzh29JonLa4Bqtl6D8JrIMvWjCnx7xEjVNmP3U0fM5o8ZObk7d0f62bA==}
+    engines: {node: '>=0.10.0'}
     dev: true
 
   /indent-string/4.0.0:
@@ -5456,7 +5537,6 @@ packages:
 
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
-    dev: true
 
   /isobject/2.1.0:
     resolution: {integrity: sha512-+OUdGJlgjOBZDfxnDjYYG6zp487z0JGNQq3cYQYg5f5hKR+syHMsaztzGeml/4kGG55CSpKSpWTY+jYGgsHLgA==}
@@ -5838,6 +5918,10 @@ packages:
     resolution: {integrity: sha512-1RUZVgQlpJSPWYbFSpmudq5nHY1doEIv89gBtF0s4gW1GF2XorxcA/70M5vq7rLv0a6mhOUccRsqkwhwLCIQ2Q==}
     dev: true
 
+  /match-all/1.2.6:
+    resolution: {integrity: sha512-0EESkXiTkWzrQQntBu2uzKvLu6vVkUGz40nGPbSZuegcfE5UuSzNjLaIu76zJWuaT/2I3Z/8M06OlUOZLGwLlQ==}
+    dev: true
+
   /mcl-wasm/0.7.9:
     resolution: {integrity: sha512-iJIUcQWA88IJB/5L15GnJVnSQJmf/YaxxV6zRavv83HILHaJQb6y0iFyDMdDO0gN8X37tdxmAOrH/P8B6RB8sQ==}
     engines: {node: '>=8.9.0'}
@@ -6163,6 +6247,14 @@ packages:
       buffer: 5.7.1
       multibase: 0.7.0
       varint: 5.0.2
+    dev: true
+
+  /murmur-128/0.2.1:
+    resolution: {integrity: sha512-WseEgiRkI6aMFBbj8Cg9yBj/y+OdipwVC7zUo3W2W1JAJITwouUOtpqsmGSg67EQmwwSyod7hsVsWY5LsrfQVg==}
+    dependencies:
+      encode-utf8: 1.0.3
+      fmix: 0.1.0
+      imul: 1.0.1
     dev: true
 
   /nan/2.17.0:
@@ -6635,7 +6727,6 @@ packages:
   /path-key/3.1.1:
     resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
     engines: {node: '>=8'}
-    dev: true
 
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
@@ -7441,12 +7532,10 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       shebang-regex: 3.0.0
-    dev: true
 
   /shebang-regex/3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
-    dev: true
 
   /shelljs/0.8.5:
     resolution: {integrity: sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==}
@@ -9054,7 +9143,6 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
-    dev: true
 
   /wide-align/1.1.3:
     resolution: {integrity: sha512-QGkOQc8XL6Bt5PwnsExKBPuMKBxnGxWWW3fU55Xt4feHozMUhdUMaBCk290qpm/wG5u/RSKzwdAC4i51YigihA==}
@@ -9334,6 +9422,14 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+    dev: true
+
+  /zksync-web3/0.8.1_ethers@5.7.2:
+    resolution: {integrity: sha512-1A4aHPQ3MyuGjpv5X/8pVEN+MdZqMjfVmiweQSRjOlklXYu65wT9BGEOtCmMs5d3gIvLp4ssfTeuR5OCKOD2kw==}
+    peerDependencies:
+      ethers: ~5.7.0
+    dependencies:
+      ethers: 5.7.2
     dev: true
 
   '@cdn.sheetjs.com/xlsx-0.19.2/xlsx-0.19.2.tgz':

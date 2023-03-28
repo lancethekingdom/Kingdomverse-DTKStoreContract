@@ -4,8 +4,10 @@ import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ethers'
 import 'hardhat-gas-reporter'
 import 'hardhat-ethernal'
+import 'hardhat-deploy'
+import 'hardhat-deploy-ethers'
 import { env } from './environment'
-
+console.log({ env })
 const config: HardhatUserConfig = {
   solidity: {
     version: '0.8.19',
@@ -15,6 +17,9 @@ const config: HardhatUserConfig = {
         runs: 200,
       },
     },
+  },
+  namedAccounts: {
+    deployer: 0,
   },
   networks: {
     hardhat: {
@@ -28,6 +33,12 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       gas: 2100000,
       gasPrice: 8000000000,
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${env.INFURA_API_KEY}`,
+      ...(env.ROOT_WALLET_PRIVATE_KEY
+        ? { accounts: [env.ROOT_WALLET_PRIVATE_KEY] }
+        : {}),
     },
     bnb_testnet: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
