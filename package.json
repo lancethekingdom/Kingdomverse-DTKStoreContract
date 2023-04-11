@@ -12,7 +12,7 @@
     "coverage": "hardhat coverage",
     "slither": "slither ./contracts --solc-remaps '@openzeppelin=node_modules/@openzeppelin @chainlink=node_modules/@chainlink' --exclude naming-convention,external-function,low-level-calls --buidler-ignore-compile",
     "gen_addVestingSchedule_config": "node scripts/gen_addVestingSchedule_config_for_safe.mjs",
-    "deploy:dev": "dotenv -e .env.development -- hardhat --network goerli deploy --tags development"
+    "deploy:dev": "dotenv -e .env.development -- hardhat --network mumbai deploy --tags development"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",

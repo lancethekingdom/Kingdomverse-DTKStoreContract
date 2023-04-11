@@ -46,6 +46,13 @@ const config: HardhatUserConfig = {
       gasPrice: 20000000000,
       // accounts: [],
     },
+    mumbai: {
+      url: 'https://rpc-mumbai.maticvigil.com',
+      chainId: 80001,
+      ...(env.ROOT_WALLET_PRIVATE_KEY
+        ? { accounts: [env.ROOT_WALLET_PRIVATE_KEY] }
+        : {}),
+    },
   },
   paths: {
     sources: './contracts',
