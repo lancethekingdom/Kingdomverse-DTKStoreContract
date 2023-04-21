@@ -7,9 +7,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const { deployer } = await getNamedAccounts()
 
-  const testking = await deploy('MintableERC721', {
+  const testking = await deploy('TestMonkeyLegends', {
     from: deployer,
-    args: ['Test Monkey Legends', 'TML', 'https://meta.monkeykingdom.io/3/'],
+    args: [],
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   })

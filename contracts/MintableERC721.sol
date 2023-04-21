@@ -15,16 +15,18 @@ contract MintableERC721 is ERC721, Ownable {
     // for mint control
     Counters.Counter private supply;
     Counters.Counter private minted; // for micmicking thirdweb droperc721
-    uint256 public maxSupply = 7000;
+    uint256 public maxSupply;
 
     string baseURI;
 
     constructor(
         string memory name_,
         string memory symbol_,
-        string memory baseURI_
+        string memory baseURI_,
+        uint256 maxSupply_
     ) ERC721(name_, symbol_) {
         baseURI = baseURI_;
+        maxSupply = maxSupply_;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
