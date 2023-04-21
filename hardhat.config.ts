@@ -9,6 +9,9 @@ import 'hardhat-deploy-ethers'
 import { env } from './environment'
 
 const config: HardhatUserConfig = {
+  etherscan: {
+    apiKey: env.ETHERSCAN_API_KEY,
+  },
   solidity: {
     version: '0.8.19',
     settings: {

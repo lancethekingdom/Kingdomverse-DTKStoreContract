@@ -6,4 +6,7 @@ export const env = cleanEnv(process.env, {
   ROOT_WALLET_PRIVATE_KEY: str({
     default: '',
   }),
+  ETHERSCAN_API_KEY: str({
+    default: 'EBPDPC9MPZ7CBVHGYRGSSYE1CMSPKCNCB2',
+  }),
 })

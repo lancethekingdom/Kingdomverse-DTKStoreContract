@@ -9,7 +9,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const testking = await deploy('TestDTKGenesis', {
     from: deployer,
-    args: [],
+    args: [
+      'Test DTK Genesis',
+      'TDTKG',
+      'https://storage.googleapis.com/fractal-launchpad-public-assets/kingdom_labs/mint0_opensea/assets/',
+      'ipfs://QmXp2bpYKQPcRYeZW8NVeum8AddYwLmAnVUnUrnJDxqhBM/0',
+      1200,
+    ],
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   })
